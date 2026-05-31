@@ -1,0 +1,28 @@
+<svg width="760" height="360" viewBox="0 0 760 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="runtimeTitle runtimeDesc">
+  <title id="runtimeTitle">AI runtime flow architecture</title>
+  <desc id="runtimeDesc">Diagram showing user requests flowing through Open WebUI, Ollama, model storage, GPU acceleration, and evaluation logs.</desc>
+  <rect width="760" height="360" fill="#101419"/>
+  <path d="M40 60H720M40 140H720M40 220H720M40 300H720M140 36V324M300 36V324M460 36V324M620 36V324" stroke="#F1EADF" stroke-opacity=".06"/>
+  <text x="44" y="40" fill="#7EA0B7" font-family="Consolas, monospace" font-size="12" font-weight="700">LOCAL LLM RUNTIME FLOW</text>
+  <rect x="54" y="118" width="128" height="78" fill="#171D24" stroke="#F1EADF" stroke-opacity=".22"/>
+  <rect x="230" y="118" width="128" height="78" fill="#171D24" stroke="#7EA0B7" stroke-opacity=".6"/>
+  <rect x="406" y="118" width="128" height="78" fill="#171D24" stroke="#C58B3B" stroke-opacity=".65"/>
+  <rect x="582" y="118" width="128" height="78" fill="#171D24" stroke="#F1EADF" stroke-opacity=".22"/>
+  <g font-family="Segoe UI, sans-serif" font-weight="700" font-size="17" fill="#F1EADF">
+    <text x="78" y="151">User</text>
+    <text x="254" y="151">Open WebUI</text>
+    <text x="430" y="151">Ollama</text>
+    <text x="606" y="151">RTX 3090</text>
+  </g>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#B8AFA2">
+    <text x="78" y="176">prompt and review</text>
+    <text x="254" y="176">session layer</text>
+    <text x="430" y="176">model runtime</text>
+    <text x="606" y="176">inference capacity</text>
+  </g>
+  <path d="M182 157H230M358 157H406M534 157H582" stroke="#7EA0B7" stroke-width="2"/>
+  <path d="M220 151L232 157L220 163M396 151L408 157L396 163M572 151L584 157L572 163" stroke="#7EA0B7" stroke-width="2"/>
+  <rect x="144" y="254" width="472" height="48" fill="#151A20" stroke="#C58B3B" stroke-opacity=".55"/>
+  <text x="170" y="284" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700">Evaluation notes: quality, latency, resource profile, model fit, operator action</text>
+  <path d="M470 196V254M380 254V196" stroke="#C58B3B" stroke-width="2" stroke-opacity=".75"/>
+</svg>

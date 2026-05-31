@@ -1,0 +1,45 @@
+<svg width="900" height="420" viewBox="0 0 900 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="labTitle labDesc">
+  <title id="labTitle">AI infrastructure lab architecture</title>
+  <desc id="labDesc">Diagram of the AI lab from physical infrastructure through Proxmox, GPU runtime, Ollama, Open WebUI, and evaluation loops.</desc>
+  <rect width="900" height="420" fill="#101419"/>
+  <path d="M40 70H860M40 150H860M40 230H860M40 310H860M120 36V384M260 36V384M400 36V384M540 36V384M680 36V384M820 36V384" stroke="#F1EADF" stroke-opacity=".06"/>
+  <text x="44" y="38" fill="#C58B3B" font-family="Consolas, monospace" font-size="13" font-weight="700">AI INFRASTRUCTURE LAB - OPERATING VIEW</text>
+  <g fill="#171D24" stroke="#F1EADF" stroke-opacity=".22">
+    <rect x="52" y="92" width="150" height="88"/>
+    <rect x="248" y="92" width="150" height="88"/>
+    <rect x="444" y="92" width="150" height="88"/>
+    <rect x="640" y="92" width="208" height="88"/>
+  </g>
+  <g font-family="Segoe UI, sans-serif" font-weight="700" font-size="18" fill="#F1EADF">
+    <text x="76" y="126">Proxmox</text>
+    <text x="272" y="126">RTX 3090</text>
+    <text x="468" y="126">Ollama</text>
+    <text x="664" y="126">Open WebUI</text>
+  </g>
+  <g font-family="Consolas, monospace" font-size="11" fill="#B8AFA2">
+    <text x="76" y="153">virtualization host</text>
+    <text x="272" y="153">gpu capacity</text>
+    <text x="468" y="153">model runtime</text>
+    <text x="664" y="153">operator interface</text>
+  </g>
+  <path d="M202 136H248M398 136H444M594 136H640" stroke="#C58B3B" stroke-width="2"/>
+  <path d="M238 130L250 136L238 142M434 130L446 136L434 142M630 130L642 136L630 142" stroke="#C58B3B" stroke-width="2"/>
+  <rect x="52" y="252" width="796" height="82" fill="#151A20" stroke="#7EA0B7" stroke-opacity=".55"/>
+  <text x="80" y="286" fill="#7EA0B7" font-family="Consolas, monospace" font-size="13" font-weight="700">EVALUATION LOOP</text>
+  <text x="80" y="314" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="19" font-weight="700">Prompt tests -> model comparison -> resource observation -> operator notes -> next build decision</text>
+  <path d="M745 180V252M152 252V180" stroke="#7EA0B7" stroke-width="2" stroke-opacity=".75"/>
+  <path d="M739 242L745 254L751 242M146 190L152 178L158 190" stroke="#7EA0B7" stroke-width="2"/>
+  <g fill="#C58B3B">
+    <circle cx="52" cy="370" r="4"/>
+    <circle cx="314" cy="370" r="4"/>
+    <circle cx="576" cy="370" r="4"/>
+    <circle cx="848" cy="370" r="4"/>
+  </g>
+  <path d="M52 370H848" stroke="#C58B3B" stroke-opacity=".5"/>
+  <g font-family="Consolas, monospace" font-size="11" fill="#B8AFA2">
+    <text x="64" y="388">build</text>
+    <text x="326" y="388">operate</text>
+    <text x="588" y="388">measure</text>
+    <text x="738" y="388">document and iterate</text>
+  </g>
+</svg>

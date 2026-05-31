@@ -1,0 +1,36 @@
+<svg width="760" height="520" viewBox="0 0 760 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Infrastructure topology diagram</title>
+  <desc id="desc">Architecture diagram showing leadership, platform, virtualization, GPU infrastructure, local models, and evaluation layers.</desc>
+  <rect width="760" height="520" fill="#101419"/>
+  <path d="M40 80H720M40 160H720M40 240H720M40 320H720M40 400H720M120 40V480M240 40V480M360 40V480M480 40V480M600 40V480" stroke="#F1EADF" stroke-opacity=".07"/>
+  <rect x="52" y="54" width="210" height="86" fill="#171D24" stroke="#C58B3B" stroke-opacity=".72"/>
+  <text x="76" y="88" fill="#C58B3B" font-family="Consolas, monospace" font-size="13" font-weight="600">LEADERSHIP</text>
+  <text x="76" y="116" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700">Modernization</text>
+  <rect x="52" y="188" width="210" height="86" fill="#171D24" stroke="#7EA0B7" stroke-opacity=".68"/>
+  <text x="76" y="222" fill="#7EA0B7" font-family="Consolas, monospace" font-size="13" font-weight="600">PLATFORM</text>
+  <text x="76" y="250" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700">Golden Paths</text>
+  <rect x="52" y="322" width="210" height="86" fill="#171D24" stroke="#F1EADF" stroke-opacity=".2"/>
+  <text x="76" y="356" fill="#B8AFA2" font-family="Consolas, monospace" font-size="13" font-weight="600">OPERATIONS</text>
+  <text x="76" y="384" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="18" font-weight="700">Reliability</text>
+  <rect x="332" y="80" width="164" height="116" fill="#1D232B" stroke="#F1EADF" stroke-opacity=".22"/>
+  <text x="358" y="118" fill="#B8AFA2" font-family="Consolas, monospace" font-size="12" font-weight="600">PROXMOX</text>
+  <text x="358" y="147" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="22" font-weight="800">AI Platform</text>
+  <circle cx="358" cy="170" r="4" fill="#79A783"/>
+  <text x="372" y="175" fill="#B8AFA2" font-family="Consolas, monospace" font-size="11">cluster lab</text>
+  <rect x="546" y="80" width="162" height="116" fill="#1D232B" stroke="#C58B3B" stroke-opacity=".68"/>
+  <text x="572" y="118" fill="#C58B3B" font-family="Consolas, monospace" font-size="12" font-weight="600">GPU NODE</text>
+  <text x="572" y="147" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="22" font-weight="800">RTX 3090</text>
+  <rect x="572" y="165" width="90" height="8" fill="#C58B3B" fill-opacity=".7"/>
+  <rect x="332" y="268" width="164" height="116" fill="#1D232B" stroke="#7EA0B7" stroke-opacity=".68"/>
+  <text x="358" y="306" fill="#7EA0B7" font-family="Consolas, monospace" font-size="12" font-weight="600">RUNTIME</text>
+  <text x="358" y="335" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="22" font-weight="800">Ollama</text>
+  <text x="358" y="362" fill="#B8AFA2" font-family="Consolas, monospace" font-size="11">local model serving</text>
+  <rect x="546" y="268" width="162" height="116" fill="#1D232B" stroke="#F1EADF" stroke-opacity=".22"/>
+  <text x="572" y="306" fill="#B8AFA2" font-family="Consolas, monospace" font-size="12" font-weight="600">INTERFACE</text>
+  <text x="572" y="335" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="22" font-weight="800">Open WebUI</text>
+  <text x="572" y="362" fill="#B8AFA2" font-family="Consolas, monospace" font-size="11">evaluation surface</text>
+  <rect x="332" y="424" width="376" height="50" fill="#151A20" stroke="#F1EADF" stroke-opacity=".16"/>
+  <text x="358" y="455" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="17" font-weight="700">Local LLM Evaluation + AI Learning Roadmap</text>
+  <path d="M262 97H332M262 231H296C316 231 316 138 332 138M262 365H296C316 365 316 326 332 326M496 138H546M414 196V268M496 326H546M627 196V268M414 384V424M627 384V424" stroke="#B8AFA2" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M326 132L338 138L326 144M540 132L552 138L540 144M408 262L414 274L420 262M540 320L552 326L540 332M621 262L627 274L633 262M408 418L414 430L420 418M621 418L627 430L633 418" stroke="#B8AFA2" stroke-opacity=".72" stroke-width="2"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg width="760" height="360" viewBox="0 0 760 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="modTitle modDesc">
+  <title id="modTitle">Modernization flow architecture</title>
+  <desc id="modDesc">Diagram showing legacy risk flowing through assessment, roadmap, execution waves, and operational stabilization.</desc>
+  <rect width="760" height="360" fill="#101419"/>
+  <path d="M40 60H720M40 140H720M40 220H720M40 300H720M140 36V324M300 36V324M460 36V324M620 36V324" stroke="#F1EADF" stroke-opacity=".06"/>
+  <text x="44" y="40" fill="#C58B3B" font-family="Consolas, monospace" font-size="12" font-weight="700">MODERNIZATION PROGRAM FLOW</text>
+  <g fill="#171D24" stroke="#F1EADF" stroke-opacity=".22">
+    <rect x="50" y="104" width="128" height="88"/>
+    <rect x="230" y="104" width="128" height="88"/>
+    <rect x="410" y="104" width="128" height="88"/>
+    <rect x="590" y="104" width="128" height="88"/>
+  </g>
+  <g font-family="Segoe UI, sans-serif" font-weight="700" font-size="17" fill="#F1EADF">
+    <text x="74" y="137">Risk</text>
+    <text x="254" y="137">Assess</text>
+    <text x="434" y="137">Roadmap</text>
+    <text x="614" y="137">Stabilize</text>
+  </g>
+  <g font-family="Consolas, monospace" font-size="10.5" fill="#B8AFA2">
+    <text x="74" y="163">lifecycle exposure</text>
+    <text x="254" y="163">impact and options</text>
+    <text x="434" y="163">phased execution</text>
+    <text x="614" y="163">operate and review</text>
+  </g>
+  <path d="M178 148H230M358 148H410M538 148H590" stroke="#C58B3B" stroke-width="2"/>
+  <path d="M220 142L232 148L220 154M400 142L412 148L400 154M580 142L592 148L580 154" stroke="#C58B3B" stroke-width="2"/>
+  <rect x="92" y="250" width="576" height="48" fill="#151A20" stroke="#7EA0B7" stroke-opacity=".5"/>
+  <text x="118" y="280" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700">Executive translation layer: cost, risk, schedule, service impact, decision points</text>
+</svg>

@@ -189,7 +189,7 @@ img {
 }
 
 .hero::after {
-  content: "01 / 09";
+  content: "01 / 11";
   position: absolute;
   right: max(20px, calc((100vw - var(--max-width)) / 2));
   bottom: 30px;
@@ -287,7 +287,9 @@ h3 {
 .mission-banner,
 .leader-quote,
 .stack-ledger,
-.placement-board {
+.placement-board,
+.learning-console,
+.status-console {
   border: 1px solid var(--line);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018));
   box-shadow: var(--shadow);
@@ -809,6 +811,147 @@ h3 {
   margin-top: 28px;
 }
 
+.learning-console {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.34fr) 1fr;
+  background:
+    repeating-linear-gradient(90deg, rgba(241, 234, 223, 0.03) 0 1px, transparent 1px 92px),
+    rgba(20, 25, 31, 0.86);
+}
+
+.learning-summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 4vw, 38px);
+  border-right: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(197, 139, 59, 0.08), transparent 46%),
+    rgba(17, 20, 24, 0.42);
+}
+
+.learning-summary p {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+}
+
+.learning-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.learning-grid article {
+  position: relative;
+  min-height: 210px;
+  padding: 24px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(29, 35, 43, 0.54);
+}
+
+.learning-grid article:nth-child(3n) {
+  border-right: 0;
+}
+
+.learning-grid article:nth-last-child(-n + 3) {
+  border-bottom: 0;
+}
+
+.learning-grid article::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  width: 34px;
+  height: 2px;
+  background: var(--amber);
+}
+
+.learning-grid span,
+.status-heading span,
+.status-column li span {
+  display: block;
+  color: var(--steel);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.learning-grid h3 {
+  margin-top: 36px;
+}
+
+.learning-grid p {
+  color: var(--muted);
+}
+
+.status-console {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(126, 160, 183, 0.09), transparent 44%),
+    rgba(20, 25, 31, 0.86);
+}
+
+.status-column {
+  padding: clamp(22px, 4vw, 34px);
+}
+
+.status-column + .status-column {
+  border-left: 1px solid var(--line);
+}
+
+.status-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.status-heading strong {
+  color: var(--text);
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+  line-height: 1.12;
+  text-align: right;
+}
+
+.status-column ul {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.status-column li {
+  display: grid;
+  grid-template-columns: 128px 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.status-column li:last-child {
+  border-bottom: 0;
+}
+
+.status-column li strong {
+  color: var(--text);
+  font-size: 1.02rem;
+}
+
+.operational .status-heading span {
+  color: var(--green);
+}
+
+.planned .status-heading span {
+  color: var(--amber);
+}
+
 .lab-command {
   display: grid;
   grid-template-columns: minmax(300px, 0.58fr) 1fr;
@@ -1040,6 +1183,8 @@ h3 {
   .philosophy-layout,
   .mission-banner,
   .platform-map,
+  .learning-console,
+  .status-console,
   .lab-layout,
   .lab-command,
   .contact-panel {
@@ -1060,11 +1205,33 @@ h3 {
     border-bottom: 1px solid var(--line);
   }
 
+  .learning-summary {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .learning-grid article,
+  .learning-grid article:nth-child(3n),
+  .learning-grid article:nth-last-child(-n + 3) {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .learning-grid article:last-child {
+    border-bottom: 0;
+  }
+
+  .status-column + .status-column {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
   .capability-grid,
   .project-grid,
   .placement-grid,
   .career-track,
   .initiative-grid,
+  .learning-grid,
   .lab-focus-grid,
   .architecture-gallery {
     grid-template-columns: 1fr;
@@ -1174,7 +1341,8 @@ h3 {
   }
 
   .panel-metrics,
-  .timeline li {
+  .timeline li,
+  .status-column li {
     grid-template-columns: 1fr;
   }
 
@@ -1190,6 +1358,14 @@ h3 {
 
   .timeline li::before {
     display: none;
+  }
+
+  .status-heading {
+    display: grid;
+  }
+
+  .status-heading strong {
+    text-align: left;
   }
 
   .lab-stack li {

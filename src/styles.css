@@ -1110,6 +1110,7 @@ h3 {
 .case-summary,
 .case-architecture,
 .case-flow-panel,
+.case-figure,
 .case-detail,
 .case-resolution,
 .case-value,
@@ -1262,6 +1263,33 @@ h3 {
 
 .case-diagram-slot.compact {
   min-height: 280px;
+}
+
+.case-figure {
+  margin: 18px 0 0;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(126, 160, 183, 0.06), transparent 42%),
+    rgba(20, 25, 31, 0.86);
+}
+
+.case-figure img {
+  width: 100%;
+  height: auto;
+  max-height: 760px;
+  object-fit: contain;
+  padding: clamp(14px, 3vw, 28px);
+  background: #101419;
+}
+
+.case-figure figcaption {
+  margin: 0;
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
 }
 
 .case-flow-panel {

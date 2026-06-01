@@ -1077,6 +1077,176 @@ h3 {
   font-weight: 700;
 }
 
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.project-tags li {
+  border: 1px solid var(--line);
+  padding: 5px 8px;
+  color: var(--steel);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(126, 160, 183, 0.06);
+}
+
+.case-hero {
+  min-height: calc(100vh - var(--header-height));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 0.46fr);
+  align-items: center;
+  gap: clamp(32px, 5vw, 70px);
+  padding-top: 72px;
+}
+
+.case-spec-panel,
+.case-summary,
+.case-architecture,
+.case-detail,
+.case-resolution,
+.case-value,
+.case-next {
+  border: 1px solid var(--line);
+  background: rgba(29, 35, 43, 0.72);
+  box-shadow: var(--shadow);
+}
+
+.case-spec-panel {
+  padding: 22px;
+  background:
+    linear-gradient(180deg, rgba(126, 160, 183, 0.08), transparent 44%),
+    rgba(29, 35, 43, 0.78);
+}
+
+.case-spec-panel ul,
+.case-resolution ul {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-spec-panel li,
+.case-resolution li {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 18px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.case-spec-panel li span,
+.case-summary span,
+.case-detail span,
+.case-resolution li span,
+.case-flow span {
+  color: var(--steel);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.case-spec-panel li strong,
+.case-resolution li strong {
+  color: var(--text);
+  text-align: right;
+}
+
+.case-summary-grid,
+.case-detail-grid,
+.case-value-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.case-detail-grid,
+.case-value-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.case-summary,
+.case-detail,
+.case-value {
+  padding: 24px;
+}
+
+.case-summary p,
+.case-detail p,
+.case-value p {
+  margin: 14px 0 0;
+  color: var(--muted);
+}
+
+.case-architecture {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.38fr) 1fr;
+  overflow: hidden;
+}
+
+.case-flow {
+  padding: clamp(24px, 4vw, 36px);
+  border-right: 1px solid var(--line);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(241, 234, 223, 0.04) 31px),
+    rgba(17, 20, 24, 0.42);
+}
+
+.case-flow ol {
+  margin: 24px 0 0;
+  padding-left: 22px;
+}
+
+.case-flow li {
+  padding: 8px 0;
+  color: var(--muted);
+}
+
+.case-architecture img {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: contain;
+  background: #101419;
+}
+
+.case-resolution {
+  padding: clamp(22px, 4vw, 34px);
+  background:
+    linear-gradient(90deg, rgba(197, 139, 59, 0.08), transparent 42%),
+    rgba(29, 35, 43, 0.72);
+}
+
+.case-resolution li {
+  grid-template-columns: 52px 1fr;
+}
+
+.case-resolution li strong {
+  text-align: left;
+}
+
+.case-next {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: center;
+  padding: clamp(28px, 5vw, 54px);
+  background:
+    linear-gradient(135deg, rgba(126, 160, 183, 0.1), transparent 44%),
+    rgba(29, 35, 43, 0.72);
+}
+
+.case-next h2 {
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+}
+
 .architecture-gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1179,6 +1349,7 @@ h3 {
 
 @media (max-width: 980px) {
   .hero,
+  .case-hero,
   .split-content,
   .philosophy-layout,
   .mission-banner,
@@ -1227,6 +1398,11 @@ h3 {
   }
 
   .capability-grid,
+  .case-summary-grid,
+  .case-detail-grid,
+  .case-value-grid,
+  .case-architecture,
+  .case-next,
   .project-grid,
   .placement-grid,
   .career-track,
@@ -1258,6 +1434,15 @@ h3 {
   .lab-command img {
     border-top: 1px solid var(--line);
     border-left: 0;
+  }
+
+  .case-flow {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .case-next {
+    align-items: start;
   }
 
   .placement-intro,
@@ -1341,9 +1526,14 @@ h3 {
   }
 
   .panel-metrics,
+  .case-spec-panel li,
   .timeline li,
   .status-column li {
     grid-template-columns: 1fr;
+  }
+
+  .case-spec-panel li strong {
+    text-align: left;
   }
 
   .panel-metrics div {

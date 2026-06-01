@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Case study: building a local AI infrastructure platform with Proxmox, RTX 3090 GPU acceleration, NVIDIA 595.80, CUDA 13.2, Open WebUI, Ollama, and GPT-OSS 20B."
+    />
+    <title>Building a Local AI Infrastructure Platform | Matt Smalling</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+  </head>
+  <body>
+    <div class="site-grid" aria-hidden="true"></div>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html#home" aria-label="Matt Smalling home">
+        <span class="brand-mark">MS</span>
+        <span>
+          <strong>Matt Smalling</strong>
+          <small>Infrastructure Modernization</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Open navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" data-nav>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#platform">Platform</a>
+        <a href="../index.html#lab">AI Lab</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section case-hero">
+        <div class="case-hero-copy reveal">
+          <p class="eyebrow">Case Study - AI Infrastructure</p>
+          <h1>Building a Local AI Infrastructure Platform</h1>
+          <p class="hero-lede">
+            A completed local AI platform build focused on GPU acceleration, recoverable infrastructure, and the
+            operating discipline required to move from a lab experiment to a dependable platform baseline.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#architecture">View Architecture</a>
+            <a class="button secondary" href="../index.html#projects">Back to Projects</a>
+          </div>
+        </div>
+
+        <div class="case-spec-panel reveal" aria-label="Validated project stack">
+          <div class="panel-topline">
+            <span>Validated Stack</span>
+            <span class="status-dot">Operational</span>
+          </div>
+          <ul>
+            <li><span>Virtualization</span><strong>Proxmox</strong></li>
+            <li><span>GPU</span><strong>RTX 3090</strong></li>
+            <li><span>Driver</span><strong>NVIDIA 595.80</strong></li>
+            <li><span>Runtime</span><strong>CUDA 13.2</strong></li>
+            <li><span>Interface</span><strong>Open WebUI</strong></li>
+            <li><span>Serving</span><strong>Ollama</strong></li>
+            <li><span>Model</span><strong>GPT-OSS 20B</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section case-overview">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Objective</p>
+          <h2>Build a controlled local AI platform that could host modern models and support future RAG, agent, and documentation workflows.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Purpose</span>
+            <p>
+              The goal was not simply to run models. The platform needed to create repeatable AI infrastructure
+              practice: hardware validation, model serving, local data control, recovery planning, and documentation
+              that could support future platform engineering work.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Outcome</span>
+            <p>
+              The final environment successfully hosted and executed Qwen 2.5 7B, Qwen 3 14B, and GPT-OSS 20B with GPU
+              acceleration while adding snapshots, NAS backups, and a documented recoverable baseline.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Architecture</p>
+          <h2>The platform connects physical GPU capacity to a user-facing AI workspace through a validated runtime path.</h2>
+        </div>
+        <div class="case-architecture reveal">
+          <div class="case-flow">
+            <span>Logical Path</span>
+            <ol>
+              <li>Proxmox host</li>
+              <li>RTX 3090 GPU</li>
+              <li>NVIDIA driver stack</li>
+              <li>CUDA runtime</li>
+              <li>LXC AI container</li>
+              <li>Open WebUI</li>
+              <li>Ollama</li>
+              <li>Large language models</li>
+            </ol>
+          </div>
+          <img src="../assets/ai-lab-architecture.svg" alt="AI lab architecture diagram" />
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Troubleshooting</p>
+          <h2>The central engineering problem was not model selection. It was proving the platform could be trusted.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Challenge</span>
+            <h3>Unstable GPU-accelerated workload behavior</h3>
+            <p>
+              Early testing produced model startup failures, slow responses, inconsistent GPU utilization, Ollama
+              runner failures, and unexpected inference behavior.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Root Cause</span>
+            <h3>GPU ownership conflict</h3>
+            <p>
+              Investigation showed the RTX 3090 was being claimed by a conflicting kernel-level component involving
+              NovaCore, preventing the NVIDIA driver from attaching cleanly.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Decision</span>
+            <h3>Rebuild from a trusted baseline</h3>
+            <p>
+              Once the environment had accumulated too much uncertainty, rebuilding became more effective than
+              continuing to troubleshoot against a drifting platform state.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Resolution</p>
+          <h2>A clean platform rebuild converted an unstable experiment into a recoverable AI infrastructure baseline.</h2>
+        </div>
+        <div class="case-resolution reveal">
+          <ul>
+            <li><span>01</span><strong>Fresh Proxmox deployment and updated host platform</strong></li>
+            <li><span>02</span><strong>Removal of conflicting GPU ownership and NVIDIA driver validation</strong></li>
+            <li><span>03</span><strong>CUDA validation and GPU visibility verification</strong></li>
+            <li><span>04</span><strong>Open WebUI, Ollama, and model deployment testing</strong></li>
+            <li><span>05</span><strong>Snapshots, NAS backups, and GitHub documentation updates</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Business Value</p>
+          <h2>The project demonstrates AI infrastructure as infrastructure: architecture, reliability, recovery, documentation, and operational judgment.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal">
+            <h3>Infrastructure Operations</h3>
+            <p>Linux administration, platform troubleshooting, environment validation, and baseline management.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>GPU Infrastructure</h3>
+            <p>NVIDIA driver management, CUDA runtime validation, GPU workload execution, and ownership diagnosis.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Platform Engineering</h3>
+            <p>Repeatable deployment practices, versioned documentation, operational procedures, and recoverability.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Next Iteration</p>
+            <h2>Future work extends the platform toward benchmarking, RAG, vector databases, AI agents, and Kubernetes-based AI infrastructure.</h2>
+          </div>
+          <a class="button primary" href="../index.html#contact">Discuss the Build</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Matt Smalling</span>
+      <span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span>
+    </footer>
+
+    <script src="../src/main.js"></script>
+  </body>
+</html>

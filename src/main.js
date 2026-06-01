@@ -3,6 +3,7 @@ const nav = document.querySelector("[data-nav]");
 const navToggle = document.querySelector("[data-nav-toggle]");
 const navLinks = [...document.querySelectorAll(".site-nav a")];
 const sections = navLinks
+  .filter((link) => link.getAttribute("href").startsWith("#"))
   .map((link) => document.querySelector(link.getAttribute("href")))
   .filter(Boolean);
 
@@ -17,12 +18,14 @@ const closeNav = () => {
   navToggle.setAttribute("aria-label", "Open navigation");
 };
 
-navToggle.addEventListener("click", () => {
-  const isOpen = nav.classList.toggle("is-open");
-  navToggle.classList.toggle("is-open", isOpen);
-  document.body.classList.toggle("nav-open", isOpen);
-  navToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
-});
+if (navToggle) {
+  navToggle.addEventListener("click", () => {
+    const isOpen = nav.classList.toggle("is-open");
+    navToggle.classList.toggle("is-open", isOpen);
+    document.body.classList.toggle("nav-open", isOpen);
+    navToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
+  });
+}
 
 navLinks.forEach((link) => {
   link.addEventListener("click", closeNav);

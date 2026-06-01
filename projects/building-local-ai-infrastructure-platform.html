@@ -38,14 +38,15 @@
     <main>
       <section class="section case-hero">
         <div class="case-hero-copy reveal">
-          <p class="eyebrow">Case Study - AI Infrastructure</p>
+          <p class="eyebrow">Engineering Case Study - AI Infrastructure</p>
           <h1>Building a Local AI Infrastructure Platform</h1>
           <p class="hero-lede">
-            A completed local AI platform build focused on GPU acceleration, recoverable infrastructure, and the
-            operating discipline required to move from a lab experiment to a dependable platform baseline.
+            This was not simply an AI installation project. It was an infrastructure engineering effort involving
+            architecture decisions, operational troubleshooting, platform validation, recovery planning, and the
+            creation of a repeatable AI infrastructure baseline.
           </p>
           <div class="hero-actions">
-            <a class="button primary" href="#architecture">View Architecture</a>
+            <a class="button primary" href="#architecture">Architecture Review</a>
             <a class="button secondary" href="../index.html#projects">Back to Projects</a>
           </div>
         </div>
@@ -60,32 +61,34 @@
             <li><span>GPU</span><strong>RTX 3090</strong></li>
             <li><span>Driver</span><strong>NVIDIA 595.80</strong></li>
             <li><span>Runtime</span><strong>CUDA 13.2</strong></li>
+            <li><span>Container</span><strong>LXC</strong></li>
             <li><span>Interface</span><strong>Open WebUI</strong></li>
             <li><span>Serving</span><strong>Ollama</strong></li>
-            <li><span>Model</span><strong>GPT-OSS 20B</strong></li>
+            <li><span>Validated Model</span><strong>GPT-OSS 20B</strong></li>
           </ul>
         </div>
       </section>
 
       <section class="section case-overview">
         <div class="section-heading reveal">
-          <p class="eyebrow">Objective</p>
-          <h2>Build a controlled local AI platform that could host modern models and support future RAG, agent, and documentation workflows.</h2>
+          <p class="eyebrow">Operating Objective</p>
+          <h2>Build a controlled local AI platform that could be validated, recovered, documented, and extended.</h2>
         </div>
         <div class="case-summary-grid">
           <article class="case-summary reveal">
-            <span>Purpose</span>
+            <span>Engineering Scope</span>
             <p>
-              The goal was not simply to run models. The platform needed to create repeatable AI infrastructure
-              practice: hardware validation, model serving, local data control, recovery planning, and documentation
-              that could support future platform engineering work.
+              The project combined infrastructure operations, GPU platform validation, Linux administration, AI runtime
+              integration, documentation, and recovery planning. The success criterion was not a working demo. The
+              success criterion was a trustworthy platform state.
             </p>
           </article>
           <article class="case-summary reveal">
-            <span>Outcome</span>
+            <span>Final Result</span>
             <p>
-              The final environment successfully hosted and executed Qwen 2.5 7B, Qwen 3 14B, and GPT-OSS 20B with GPU
-              acceleration while adding snapshots, NAS backups, and a documented recoverable baseline.
+              The rebuilt environment successfully hosted and executed Qwen 7B, Qwen 14B, and GPT-OSS 20B with GPU
+              acceleration, then established a recoverable baseline through snapshots, NAS backups, and GitHub
+              documentation.
             </p>
           </article>
         </div>
@@ -93,104 +96,212 @@
 
       <section class="section" id="architecture">
         <div class="section-heading reveal">
-          <p class="eyebrow">Architecture</p>
-          <h2>The platform connects physical GPU capacity to a user-facing AI workspace through a validated runtime path.</h2>
+          <p class="eyebrow">Architecture Overview</p>
+          <h2>The platform separates infrastructure, GPU enablement, runtime services, application access, and model validation into clear operating layers.</h2>
         </div>
         <div class="case-architecture reveal">
+          <div class="case-layer-map">
+            <article><span>Infrastructure Layer</span><strong>Proxmox host, storage, network, NAS backup path</strong></article>
+            <article><span>Virtualization Layer</span><strong>LXC container boundary and platform control</strong></article>
+            <article><span>GPU Layer</span><strong>RTX 3090, NVIDIA 595.80, driver ownership validation</strong></article>
+            <article><span>Runtime Layer</span><strong>CUDA 13.2 and Ollama model serving</strong></article>
+            <article><span>Application Layer</span><strong>Open WebUI user access and workflow validation</strong></article>
+            <article><span>Model Layer</span><strong>Qwen models and GPT-OSS 20B execution</strong></article>
+          </div>
+          <div class="case-diagram-slot" aria-label="Placeholder for future draw.io architecture diagram">
+            <span>Future Draw.io Diagram</span>
+            <strong>Physical topology, GPU path, container boundary, runtime services, recovery flow</strong>
+          </div>
+        </div>
+
+        <div class="case-flow-panel reveal">
           <div class="case-flow">
-            <span>Logical Path</span>
+            <span>Validated Logical Flow</span>
             <ol>
-              <li>Proxmox host</li>
-              <li>RTX 3090 GPU</li>
-              <li>NVIDIA driver stack</li>
-              <li>CUDA runtime</li>
-              <li>LXC AI container</li>
+              <li>Proxmox</li>
+              <li>RTX 3090</li>
+              <li>NVIDIA 595.80</li>
+              <li>CUDA 13.2</li>
+              <li>LXC Container</li>
               <li>Open WebUI</li>
               <li>Ollama</li>
-              <li>Large language models</li>
+              <li>Qwen Models</li>
+              <li>GPT-OSS 20B</li>
             </ol>
           </div>
-          <img src="../assets/ai-lab-architecture.svg" alt="AI lab architecture diagram" />
+          <div class="case-diagram-slot compact" aria-label="Placeholder for future draw.io runtime diagram">
+            <span>Future Draw.io Diagram</span>
+            <strong>Runtime request path and model validation sequence</strong>
+          </div>
         </div>
       </section>
 
       <section class="section">
         <div class="section-heading reveal">
-          <p class="eyebrow">Troubleshooting</p>
-          <h2>The central engineering problem was not model selection. It was proving the platform could be trusted.</h2>
+          <p class="eyebrow">Engineering Timeline</p>
+          <h2>The build progressed from initial deployment through driver investigation, rebuild, validation, recovery, and portfolio integration.</h2>
         </div>
-        <div class="case-detail-grid">
-          <article class="case-detail reveal">
-            <span>Challenge</span>
-            <h3>Unstable GPU-accelerated workload behavior</h3>
-            <p>
-              Early testing produced model startup failures, slow responses, inconsistent GPU utilization, Ollama
-              runner failures, and unexpected inference behavior.
-            </p>
+        <ol class="case-timeline">
+          <li class="reveal"><span>01</span><strong>Initial AI Platform Deployment</strong></li>
+          <li class="reveal"><span>02</span><strong>GPU Validation Challenges</strong></li>
+          <li class="reveal"><span>03</span><strong>VFIO Investigation</strong></li>
+          <li class="reveal"><span>04</span><strong>Ollama Runtime Failures</strong></li>
+          <li class="reveal"><span>05</span><strong>Platform State Confidence Review</strong></li>
+          <li class="reveal"><span>06</span><strong>Decision To Rebuild</strong></li>
+          <li class="reveal"><span>07</span><strong>Fresh Proxmox Deployment</strong></li>
+          <li class="reveal"><span>08</span><strong>NovaCore Conflict Discovery</strong></li>
+          <li class="reveal"><span>09</span><strong>NVIDIA 595.80 Installation</strong></li>
+          <li class="reveal"><span>10</span><strong>CUDA 13.2 Validation</strong></li>
+          <li class="reveal"><span>11</span><strong>Open WebUI Validation</strong></li>
+          <li class="reveal"><span>12</span><strong>Ollama Validation</strong></li>
+          <li class="reveal"><span>13</span><strong>Qwen Model Validation</strong></li>
+          <li class="reveal"><span>14</span><strong>GPT-OSS 20B Validation</strong></li>
+          <li class="reveal"><span>15</span><strong>Snapshot Creation</strong></li>
+          <li class="reveal"><span>16</span><strong>NAS Backup Creation</strong></li>
+          <li class="reveal"><span>17</span><strong>GitHub Documentation</strong></li>
+          <li class="reveal"><span>18</span><strong>Portfolio Integration</strong></li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Key Decisions</p>
+          <h2>The project hinged on engineering judgment: when to keep troubleshooting, when to challenge assumptions, and when to protect the validated state.</h2>
+        </div>
+        <div class="case-decision-grid">
+          <article class="case-decision reveal">
+            <span>Decision 1</span>
+            <h3>Continue troubleshooting versus rebuild from a trusted baseline</h3>
+            <p><strong>Outcome:</strong> Fresh rebuild selected.</p>
+            <p><strong>Reason:</strong> Confidence in platform state had become too low.</p>
           </article>
-          <article class="case-detail reveal">
-            <span>Root Cause</span>
-            <h3>GPU ownership conflict</h3>
-            <p>
-              Investigation showed the RTX 3090 was being claimed by a conflicting kernel-level component involving
-              NovaCore, preventing the NVIDIA driver from attaching cleanly.
-            </p>
+          <article class="case-decision reveal">
+            <span>Decision 2</span>
+            <h3>Assume AI runtime issue versus validate GPU ownership</h3>
+            <p><strong>Outcome:</strong> NovaCore conflict identified.</p>
+            <p><strong>Reason:</strong> Root cause analysis revealed a driver ownership conflict.</p>
           </article>
-          <article class="case-detail reveal">
-            <span>Decision</span>
-            <h3>Rebuild from a trusted baseline</h3>
-            <p>
-              Once the environment had accumulated too much uncertainty, rebuilding became more effective than
-              continuing to troubleshoot against a drifting platform state.
-            </p>
+          <article class="case-decision reveal">
+            <span>Decision 3</span>
+            <h3>Move on after validation versus establish recovery strategy</h3>
+            <p><strong>Outcome:</strong> Snapshot and NAS backup created.</p>
+            <p><strong>Reason:</strong> A stable platform is only valuable if it can be recovered.</p>
           </article>
         </div>
       </section>
 
       <section class="section">
         <div class="section-heading reveal">
-          <p class="eyebrow">Resolution</p>
-          <h2>A clean platform rebuild converted an unstable experiment into a recoverable AI infrastructure baseline.</h2>
+          <p class="eyebrow">Root Cause Analysis</p>
+          <h2>The investigation treated runtime failures as symptoms of a deeper platform state and GPU ownership problem.</h2>
         </div>
-        <div class="case-resolution reveal">
-          <ul>
-            <li><span>01</span><strong>Fresh Proxmox deployment and updated host platform</strong></li>
-            <li><span>02</span><strong>Removal of conflicting GPU ownership and NVIDIA driver validation</strong></li>
-            <li><span>03</span><strong>CUDA validation and GPU visibility verification</strong></li>
-            <li><span>04</span><strong>Open WebUI, Ollama, and model deployment testing</strong></li>
-            <li><span>05</span><strong>Snapshots, NAS backups, and GitHub documentation updates</strong></li>
-          </ul>
+        <div class="case-investigation reveal">
+          <article>
+            <span>01</span>
+            <h3>VFIO Investigation</h3>
+            <p>GPU behavior was reviewed at the host and passthrough layers to determine whether the device was being held by the wrong subsystem.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>GPU Ownership Analysis</h3>
+            <p>The RTX 3090 needed a clear ownership path before CUDA and model execution could be trusted.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>NovaCore Conflict Discovery</h3>
+            <p>A conflicting driver stack involving NovaCore was identified as a blocker for clean NVIDIA driver attachment.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Driver Attachment Issues</h3>
+            <p>NVIDIA installation failures and inconsistent module behavior were traced back to the underlying ownership conflict.</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h3>Platform State Drift</h3>
+            <p>Accumulated troubleshooting changes reduced confidence in the environment, making a clean rebuild the stronger engineering path.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Key Outcomes Dashboard</p>
+          <h2>The final platform state was validated across compute, driver, runtime, application, models, and recovery controls.</h2>
+        </div>
+        <div class="case-outcome-dashboard reveal" aria-label="Operational outcomes dashboard">
+          <article><span>Operational</span><strong>RTX 3090 Infrastructure</strong></article>
+          <article><span>Operational</span><strong>NVIDIA 595.80</strong></article>
+          <article><span>Operational</span><strong>CUDA 13.2</strong></article>
+          <article><span>Operational</span><strong>Open WebUI</strong></article>
+          <article><span>Operational</span><strong>Ollama</strong></article>
+          <article><span>Validated</span><strong>Qwen 7B</strong></article>
+          <article><span>Validated</span><strong>Qwen 14B</strong></article>
+          <article><span>Validated</span><strong>GPT-OSS 20B</strong></article>
+          <article><span>Recovery</span><strong>Snapshot Strategy</strong></article>
+          <article><span>Recovery</span><strong>NAS Backup Strategy</strong></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-lesson-callout reveal">
+          <p class="eyebrow">Primary Lesson</p>
+          <blockquote>
+            <p>"Trusting a clean baseline can be more valuable than endlessly troubleshooting an unknown environment."</p>
+          </blockquote>
+        </div>
+        <div class="case-lesson-grid">
+          <article class="case-value reveal">
+            <h3>Symptoms are not always root causes.</h3>
+            <p>Ollama failures and slow model responses pointed toward runtime issues, but the deeper issue was GPU ownership.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Documentation accelerates troubleshooting.</h3>
+            <p>Notes, screenshots, configuration details, and validation results reduced repeated work and improved decision quality.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Recovery planning should be part of the build process.</h3>
+            <p>Snapshots and NAS backups converted a working state into a recoverable platform baseline.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>AI Infrastructure is still Infrastructure.</h3>
+            <p>Architecture, reliability, security, monitoring, recovery, and documentation remain core operating concerns.</p>
+          </article>
         </div>
       </section>
 
       <section class="section">
         <div class="section-heading reveal">
           <p class="eyebrow">Business Value</p>
-          <h2>The project demonstrates AI infrastructure as infrastructure: architecture, reliability, recovery, documentation, and operational judgment.</h2>
+          <h2>The project demonstrates enterprise-relevant infrastructure capability across operations, platform engineering, AI infrastructure, and recovery discipline.</h2>
         </div>
-        <div class="case-value-grid">
-          <article class="case-value reveal">
-            <h3>Infrastructure Operations</h3>
-            <p>Linux administration, platform troubleshooting, environment validation, and baseline management.</p>
-          </article>
-          <article class="case-value reveal">
-            <h3>GPU Infrastructure</h3>
-            <p>NVIDIA driver management, CUDA runtime validation, GPU workload execution, and ownership diagnosis.</p>
-          </article>
-          <article class="case-value reveal">
-            <h3>Platform Engineering</h3>
-            <p>Repeatable deployment practices, versioned documentation, operational procedures, and recoverability.</p>
-          </article>
+        <div class="case-value-grid enterprise">
+          <article class="case-value reveal"><h3>Infrastructure Operations</h3><p>Validated host state, service behavior, backup posture, and operational reliability.</p></article>
+          <article class="case-value reveal"><h3>GPU Infrastructure</h3><p>Managed driver installation, CUDA validation, GPU visibility, and workload execution.</p></article>
+          <article class="case-value reveal"><h3>Linux Administration</h3><p>Worked through host-level behavior, kernel-level ownership, runtime services, and containerized execution.</p></article>
+          <article class="case-value reveal"><h3>Platform Engineering</h3><p>Created a repeatable baseline with documented decisions, validation steps, and recovery controls.</p></article>
+          <article class="case-value reveal"><h3>AI Infrastructure</h3><p>Integrated Open WebUI, Ollama, local model execution, and future-ready platform patterns.</p></article>
+          <article class="case-value reveal"><h3>Disaster Recovery</h3><p>Established snapshot and NAS backup strategy immediately after successful validation.</p></article>
+          <article class="case-value reveal"><h3>Documentation and Repeatability</h3><p>Converted troubleshooting and implementation work into artifacts that support future rebuilds.</p></article>
+          <article class="case-value reveal"><h3>Operational Decision Making</h3><p>Selected rebuild over continued troubleshooting when confidence in platform state became too low.</p></article>
         </div>
       </section>
 
       <section class="section">
         <div class="case-next reveal">
           <div>
-            <p class="eyebrow">Next Iteration</p>
-            <h2>Future work extends the platform toward benchmarking, RAG, vector databases, AI agents, and Kubernetes-based AI infrastructure.</h2>
+            <p class="eyebrow">Future Roadmap</p>
+            <h2>Future initiatives extend the validated baseline into broader AI platform engineering capabilities.</h2>
           </div>
-          <a class="button primary" href="../index.html#contact">Discuss the Build</a>
+          <ul class="case-roadmap" aria-label="Future roadmap">
+            <li>llama.cpp</li>
+            <li>vLLM</li>
+            <li>Vector Database Platform</li>
+            <li>RAG Knowledge Platform</li>
+            <li>Secret Management</li>
+            <li>AI Operations Agent</li>
+            <li>AI Platform Engineering Lab</li>
+          </ul>
         </div>
       </section>
     </main>

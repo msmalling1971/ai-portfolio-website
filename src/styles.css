@@ -1036,6 +1036,14 @@ h3 {
   padding: 28px;
 }
 
+.lab-notes a {
+  display: inline-block;
+  margin-top: 8px;
+  border-bottom: 1px solid var(--amber);
+  color: var(--amber);
+  font-weight: 700;
+}
+
 .lab-focus-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1495,6 +1503,48 @@ h3 {
   font-size: clamp(1.8rem, 4vw, 4rem);
   font-weight: 800;
   line-height: 1.06;
+}
+
+.case-notes-callout {
+  border: 1px solid var(--line);
+  padding: clamp(28px, 5vw, 54px);
+  background:
+    linear-gradient(135deg, rgba(197, 139, 59, 0.12), transparent 42%),
+    rgba(29, 35, 43, 0.78);
+  box-shadow: var(--shadow);
+}
+
+.case-notes-heading {
+  margin-bottom: 26px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.case-notes-heading h2 {
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
+}
+
+.case-notes-copy {
+  max-width: 900px;
+}
+
+.case-notes-copy p,
+.case-notes-copy li {
+  color: var(--muted);
+  font-size: 1.04rem;
+}
+
+.case-notes-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.case-notes-copy ul {
+  margin: 8px 0 22px;
+  padding-left: 22px;
+}
+
+.case-notes-copy li::marker {
+  color: var(--amber);
 }
 
 .case-lesson-grid {

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Case study: building a llama.cpp runtime platform with Proxmox, Debian 13, RTX 3090 GPU acceleration, CUDA Toolkit, Open WebUI, and Qwen 14B GGUF."
+    />
+    <title>Building a llama.cpp Runtime Platform | Matt Smalling</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+  </head>
+  <body>
+    <div class="site-grid" aria-hidden="true"></div>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html#home" aria-label="Matt Smalling home">
+        <span class="brand-mark">MS</span>
+        <span>
+          <strong>Matt Smalling</strong>
+          <small>Infrastructure Modernization</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Open navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" data-nav>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#platform">Platform</a>
+        <a href="../index.html#lab">AI Lab</a>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section case-hero">
+        <div class="case-hero-copy reveal">
+          <p class="eyebrow">Engineering Case Study - AI Infrastructure</p>
+          <h1>Building a llama.cpp Runtime Platform</h1>
+          <p class="hero-lede">
+            After building a local AI platform using Open WebUI and Ollama, I wanted to understand what was happening
+            underneath the runtime layer. This project explored GPU-accelerated inference using llama.cpp, Qwen 14B
+            GGUF, Open WebUI integration, and recovery-focused platform engineering practices.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#architecture">Architecture Review</a>
+            <a class="button secondary" href="../index.html#projects">Back to Projects</a>
+          </div>
+        </div>
+
+        <div class="case-spec-panel reveal" aria-label="Validated project stack">
+          <div class="panel-topline">
+            <span>Validated Stack</span>
+            <span class="status-dot">Operational</span>
+          </div>
+          <ul>
+            <li><span>Virtualization</span><strong>Proxmox</strong></li>
+            <li><span>Container OS</span><strong>Debian 13</strong></li>
+            <li><span>GPU</span><strong>RTX 3090</strong></li>
+            <li><span>Runtime</span><strong>CUDA Toolkit</strong></li>
+            <li><span>Inference</span><strong>llama.cpp</strong></li>
+            <li><span>Interface</span><strong>Open WebUI</strong></li>
+            <li><span>Model Format</span><strong>GGUF</strong></li>
+            <li><span>Validated Model</span><strong>Qwen 14B</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section case-overview">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Executive Summary</p>
+          <h2>Understand the runtime, model formats, API layer, and recovery strategy behind local AI infrastructure.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Engineering Scope</span>
+            <p>
+              Rather than relying solely on packaged solutions, I built a dedicated llama.cpp runtime platform running
+              inside a Proxmox LXC container with GPU passthrough and CUDA acceleration.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Final Result</span>
+            <p>
+              The platform successfully served a Qwen 14B GGUF model through llama-server, integrated with Open WebUI,
+              and leveraged an RTX 3090 for inference acceleration.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-lesson-callout reveal">
+          <p class="eyebrow">Primary Lesson</p>
+          <blockquote>
+            <p>"Understanding the layers beneath a platform is what allows you to troubleshoot, recover, and scale it."</p>
+          </blockquote>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Learning Objectives</p>
+          <h2>The project focused on operating local AI runtimes, not just using models.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal"><h3>What llama.cpp actually does</h3><p>Understand the runtime behavior beneath packaged local AI tools.</p></article>
+          <article class="case-value reveal"><h3>How GGUF models work</h3><p>Learn how model files, quantization, and runtime compatibility affect deployment choices.</p></article>
+          <article class="case-value reveal"><h3>Inference versus training</h3><p>Separate model serving concerns from the very different requirements of model training.</p></article>
+          <article class="case-value reveal"><h3>GPU runtime flow</h3><p>Validate how AI runtimes interact with drivers, CUDA libraries, and physical GPU resources.</p></article>
+          <article class="case-value reveal"><h3>Open WebUI integration</h3><p>Trace how the application layer communicates with model backends through an API surface.</p></article>
+          <article class="case-value reveal"><h3>Enterprise operation</h3><p>Run local AI infrastructure with repeatability, recovery, documentation, and ownership.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Why It Matters</p>
+          <h2>Most AI demonstrations focus on using models. I wanted to understand how to operate them.</h2>
+        </div>
+        <div class="case-outcome-dashboard reveal" aria-label="Runtime platform value drivers">
+          <article><span>Control</span><strong>Cost Control</strong></article>
+          <article><span>Speed</span><strong>Performance Optimization</strong></article>
+          <article><span>Protection</span><strong>Data Privacy</strong></article>
+          <article><span>Reliability</span><strong>Platform Stability</strong></article>
+          <article><span>Recovery</span><strong>Recovery Planning</strong></article>
+          <article><span>Growth</span><strong>Future Scaling</strong></article>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Architecture Overview</p>
+          <h2>The platform separates host infrastructure, container execution, GPU acceleration, model serving, and user access into clear layers.</h2>
+        </div>
+        <div class="case-architecture reveal">
+          <div class="case-layer-map">
+            <article><span>Host Platform</span><strong>Proxmox VE, dedicated AI host, RTX 3090</strong></article>
+            <article><span>Container Layer</span><strong>CT201, Debian 13, privileged LXC, nesting enabled</strong></article>
+            <article><span>GPU Layer</span><strong>NVIDIA driver path, CUDA Toolkit, GPU visibility validation</strong></article>
+            <article><span>Runtime Layer</span><strong>llama.cpp, llama-cli, llama-server</strong></article>
+            <article><span>Model Layer</span><strong>Qwen3 14B GGUF model served through llama-server</strong></article>
+            <article><span>Application Layer</span><strong>Open WebUI integration and user-facing access</strong></article>
+          </div>
+          <div class="case-diagram-slot" aria-label="Placeholder for supplied architecture diagram number 2">
+            <span>Architecture Diagram #2</span>
+            <strong>Ready for the supplied llama.cpp Runtime Platform Architecture image</strong>
+          </div>
+        </div>
+
+        <figure class="case-figure reveal">
+          <img
+            src="../images/project-screenshots/llama.cpp Runtime Platform Architecture.drawio.png"
+            alt="llama.cpp runtime platform architecture diagram"
+          />
+          <figcaption>llama.cpp Runtime Platform Architecture</figcaption>
+        </figure>
+
+        <div class="case-flow-panel reveal">
+          <div class="case-flow">
+            <span>Validated Logical Flow</span>
+            <ol>
+              <li>Proxmox</li>
+              <li>Debian 13 LXC</li>
+              <li>RTX 3090</li>
+              <li>CUDA Toolkit</li>
+              <li>llama.cpp</li>
+              <li>llama-server</li>
+              <li>Qwen 14B GGUF</li>
+              <li>Open WebUI</li>
+            </ol>
+          </div>
+          <div class="case-diagram-slot compact" aria-label="Runtime request path">
+            <span>Runtime Request Path</span>
+            <strong>Open WebUI request, llama-server API response, GPU-accelerated model inference</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Build Process Timeline</p>
+          <h2>The build progressed from platform planning through runtime validation, application integration, recovery planning, and lessons learned.</h2>
+        </div>
+        <ol class="case-timeline">
+          <li class="reveal"><span>01</span><strong>Platform Planning</strong></li>
+          <li class="reveal"><span>02</span><strong>Container Deployment</strong></li>
+          <li class="reveal"><span>03</span><strong>GPU Enablement</strong></li>
+          <li class="reveal"><span>04</span><strong>Runtime Installation</strong></li>
+          <li class="reveal"><span>05</span><strong>Model Validation</strong></li>
+          <li class="reveal"><span>06</span><strong>Application Integration</strong></li>
+          <li class="reveal"><span>07</span><strong>Recovery Planning</strong></li>
+          <li class="reveal"><span>08</span><strong>Lessons Learned</strong></li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Lessons Learned</p>
+          <h2>The most valuable work was understanding why the platform ran, not only proving that it could run.</h2>
+        </div>
+        <div class="case-lesson-grid">
+          <article class="case-value reveal">
+            <h3>Runtime knowledge matters</h3>
+            <p>Understanding the backend runtime makes troubleshooting more direct and future scaling decisions clearer.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Recovery is part of the platform</h3>
+            <p>A working state is most useful when it can be protected, restored, and repeated.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>GPU enablement is only one layer</h3>
+            <p>Drivers and CUDA matter, but they still need to connect cleanly to containers, runtimes, APIs, and applications.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Documentation creates repeatability</h3>
+            <p>Notes, validation steps, and known-good baselines reduce future troubleshooting time.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">Signature Notes</p>
+            <h2>Matt's Notes</h2>
+          </div>
+          <div class="case-notes-copy">
+            <p>I originally thought this project would mostly be about running a model.</p>
+            <p>It wasn't.</p>
+            <p>
+              Most of my time was spent understanding how GPU passthrough, NVIDIA drivers, CUDA libraries, llama.cpp,
+              llama-server, Open WebUI, and GGUF models fit together.
+            </p>
+            <p>Looking back, that turned out to be the most valuable part of the project.</p>
+            <p>The model running was the result. Understanding why it ran was the lesson.</p>
+            <p>
+              One thing that surprised me was how similar AI infrastructure feels to traditional infrastructure. The
+              technologies are different, but the fundamentals are familiar:
+            </p>
+            <ul>
+              <li>Build from a known baseline</li>
+              <li>Validate assumptions</li>
+              <li>Create recovery points</li>
+              <li>Document everything</li>
+              <li>Protect what works</li>
+            </ul>
+            <p>
+              If I were starting again today, I would spend less time trying to rescue questionable environments and
+              more time rebuilding from known-good configurations.
+            </p>
+            <p>That lesson alone probably saved me dozens of future troubleshooting hours.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Business Value</p>
+          <h2>Organizations evaluating AI infrastructure need more than model access.</h2>
+        </div>
+        <div class="case-value-grid enterprise">
+          <article class="case-value reveal"><h3>Repeatability</h3><p>Known-good patterns make AI runtime environments easier to rebuild and extend.</p></article>
+          <article class="case-value reveal"><h3>Recoverability</h3><p>Recovery planning protects validated platform states before future changes introduce risk.</p></article>
+          <article class="case-value reveal"><h3>Operational Visibility</h3><p>Runtime-layer understanding improves diagnosis across GPU, CUDA, model serving, and application access.</p></article>
+          <article class="case-value reveal"><h3>Documentation</h3><p>Clear notes convert one successful build into a repeatable infrastructure practice.</p></article>
+          <article class="case-value reveal"><h3>Platform Ownership</h3><p>Owning the runtime layer gives teams more control over performance, privacy, and cost.</p></article>
+          <article class="case-value reveal"><h3>Enterprise Discipline</h3><p>The project applies familiar infrastructure principles to a newer AI platform surface.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Runtime Category</p>
+            <h2>AI Infrastructure, Platform Engineering, Local AI Runtime Platforms, and GPU Computing.</h2>
+          </div>
+          <ul class="case-roadmap" aria-label="Project categories">
+            <li>AI Infrastructure</li>
+            <li>Platform Engineering</li>
+            <li>Local AI Runtime Platforms</li>
+            <li>GPU Computing</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Matt Smalling</span>
+      <span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span>
+    </footer>
+
+    <script src="../src/main.js"></script>
+  </body>
+</html>

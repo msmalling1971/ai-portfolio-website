@@ -24,6 +24,7 @@
   </g>
   <path d="M178 148H230M358 148H410M538 148H590" stroke="#C58B3B" stroke-width="2"/>
   <path d="M220 142L232 148L220 154M400 142L412 148L400 154M580 142L592 148L580 154" stroke="#C58B3B" stroke-width="2"/>
-  <rect x="92" y="250" width="576" height="48" fill="#151A20" stroke="#7EA0B7" stroke-opacity=".5"/>
-  <text x="118" y="280" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700">Executive translation layer: cost, risk, schedule, service impact, decision points</text>
+  <rect x="110" y="242" width="540" height="72" fill="#151A20" stroke="#7EA0B7" stroke-opacity=".5"/>
+  <text x="132" y="270" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700">Executive translation layer: cost, risk, schedule,</text>
+  <text x="132" y="294" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700">service impact, decision points</text>
 </svg>

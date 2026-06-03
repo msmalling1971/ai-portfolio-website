@@ -22,7 +22,8 @@
   </g>
   <path d="M182 157H230M358 157H406M534 157H582" stroke="#7EA0B7" stroke-width="2"/>
   <path d="M220 151L232 157L220 163M396 151L408 157L396 163M572 151L584 157L572 163" stroke="#7EA0B7" stroke-width="2"/>
-  <rect x="144" y="254" width="472" height="48" fill="#151A20" stroke="#C58B3B" stroke-opacity=".55"/>
-  <text x="170" y="284" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700">Evaluation notes: quality, latency, resource profile, model fit, operator action</text>
-  <path d="M470 196V254M380 254V196" stroke="#C58B3B" stroke-width="2" stroke-opacity=".75"/>
+  <rect x="166" y="246" width="428" height="72" fill="#151A20" stroke="#C58B3B" stroke-opacity=".55"/>
+  <text x="188" y="274" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700">Evaluation notes: quality, latency, resource profile,</text>
+  <text x="188" y="298" fill="#F1EADF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700">model fit, operator action</text>
+  <path d="M470 196V246M380 246V196" stroke="#C58B3B" stroke-width="2" stroke-opacity=".75"/>
 </svg>

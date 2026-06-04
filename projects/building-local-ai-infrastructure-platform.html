@@ -252,6 +252,267 @@
       </section>
 
       <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Benchmarking & Observability</p>
+          <h2>The project moved beyond running a local model into measuring runtime behavior under load.</h2>
+          <p>
+            The next phase of the lab added vLLM serving, Prometheus metrics, Grafana dashboards, and Locust load
+            testing so the platform could be judged by throughput, latency, queue depth, and GPU behavior rather than a
+            single successful response.
+          </p>
+        </div>
+
+        <p class="benchmark-table-caption reveal">
+          Benchmark results were captured using Locust, Prometheus, Grafana, and NVIDIA GPU telemetry while serving
+          Qwen 2.5 7B through vLLM on an EVGA RTX 3090 FTW3 Ultra.
+        </p>
+        <div class="case-table-panel reveal" aria-label="NovaLab AI runtime benchmark summary">
+          <table class="case-benchmark-table">
+            <thead>
+              <tr>
+                <th>Test</th>
+                <th>Users</th>
+                <th>Generation Tokens/sec</th>
+                <th>Prompt Tokens/sec</th>
+                <th>Avg Latency</th>
+                <th>P95 Latency</th>
+                <th>Waiting Requests</th>
+                <th>Failures</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Baseline</th>
+                <td>1</td>
+                <td>~33.07</td>
+                <td>~6.58</td>
+                <td>~4.18s</td>
+                <td>~4.20-4.88s</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th scope="row">Concurrency Test</th>
+                <td>5</td>
+                <td>~159.31</td>
+                <td>~29.6</td>
+                <td>~4.22s</td>
+                <td>~4.30-4.88s</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th scope="row">Load Test</th>
+                <td>25</td>
+                <td>~751.76</td>
+                <td>~141</td>
+                <td>~4.54s</td>
+                <td>~4.60-4.88s</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th scope="row">Sustained Load Test</th>
+                <td>50</td>
+                <td>~1439.93</td>
+                <td>~262</td>
+                <td>~4.76-4.92s</td>
+                <td>~4.89-5.0s</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section-heading benchmark-subheading reveal">
+          <p class="eyebrow">Understanding the Dashboard</p>
+          <h2>Three layers: observability health, runtime behavior, and saturation signals.</h2>
+          <p>
+            The dashboard is meant to show whether the monitoring box is healthy, how the AI runtime is behaving, and
+            whether requests are starting to queue.
+          </p>
+        </div>
+
+        <div class="case-detail-grid benchmark-grid">
+          <article class="case-detail reveal">
+            <span>Server Health</span>
+            <h3>CT203 CPU Usage %</h3>
+            <p>
+              Shows whether Prometheus, Grafana, Node Exporter, and Locust are using enough CPU to become part of the
+              benchmark problem.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Server Health</span>
+            <h3>CT203 Memory Usage %</h3>
+            <p>
+              Shows whether the observability and load-testing container has enough RAM headroom during benchmark
+              runs.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Server Health</span>
+            <h3>CT203 Disk Usage %</h3>
+            <p>
+              Tracks local disk pressure on the observability server, which matters because Prometheus stores
+              time-series data locally.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Throughput</span>
+            <h3>Generation Tokens/sec</h3>
+            <p>
+              Measures output throughput: how many response tokens Qwen 2.5 7B generates per second.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Throughput</span>
+            <h3>Prompt Tokens/sec</h3>
+            <p>
+              Measures input throughput: how many prompt tokens are processed before responses are generated.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Saturation</span>
+            <h3>Requests Running</h3>
+            <p>
+              Shows active inference requests currently being processed by vLLM. It is the current concurrency view.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Saturation</span>
+            <h3>Requests Waiting</h3>
+            <p>
+              Shows queued requests waiting for GPU/runtime resources. Zero means requests are not backing up.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>User Experience</span>
+            <h3>Average Request Latency</h3>
+            <p>
+              Shows average request completion time. It is one of the main user-facing performance metrics.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>User Experience</span>
+            <h3>P95 Request Latency</h3>
+            <p>
+              Shows the response time experienced by 95% of requests, which helps expose slow outliers.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Runtime Memory</span>
+            <h3>KV Cache Usage %</h3>
+            <p>
+              Shows how much of the runtime's short-term memory workspace is being used. 0-30% is plenty of headroom,
+              30-70% is normal, 70-90% needs attention, and 90%+ can become bottleneck territory.
+            </p>
+          </article>
+        </div>
+
+        <div class="case-resolution benchmark-callout reveal">
+          <p class="eyebrow">GPU Validation</p>
+          <h2>RTX 3090 Runtime Validation</h2>
+          <p>
+            During the 50-user benchmark, the EVGA RTX 3090 FTW3 Ultra reached 100% utilization and 249W power draw
+            while staying around 56 degrees C. VRAM usage was approximately 21.9GB out of 24GB. There were zero failed
+            requests and zero queued requests.
+          </p>
+        </div>
+
+        <div class="case-benchmark-evidence reveal" aria-label="Benchmark validation screenshots">
+          <div class="case-evidence-group">
+            <div class="project-meta">
+              <span>Baseline Validation</span>
+              <span>1 User</span>
+            </div>
+            <div class="case-screenshot-placeholders">
+              <figure class="case-screenshot-card">
+                <button class="case-screenshot-trigger" type="button" data-lightbox-image="../images/project-screenshots/ai-infrastructure-platform/benchmark-1user-grafana.png">
+                  <img
+                    src="../images/project-screenshots/ai-infrastructure-platform/benchmark-1user-grafana.png"
+                    alt="Grafana dashboard showing NovaLab AI runtime metrics during the 1-user baseline benchmark"
+                  />
+                </button>
+                <figcaption>Grafana Runtime Metrics</figcaption>
+              </figure>
+              <figure class="case-screenshot-card">
+                <button class="case-screenshot-trigger" type="button" data-lightbox-image="../images/project-screenshots/ai-infrastructure-platform/benchmark-1user-locust.png">
+                  <img
+                    src="../images/project-screenshots/ai-infrastructure-platform/benchmark-1user-locust.png"
+                    alt="Locust load test results for the NovaLab AI runtime 1-user baseline benchmark"
+                  />
+                </button>
+                <figcaption>Locust Load Test Results</figcaption>
+              </figure>
+            </div>
+            <p>
+              Initial baseline validation showing approximately 33 generation tokens/sec, stable latency, and zero
+              failures.
+            </p>
+          </div>
+
+          <div class="case-evidence-group">
+            <div class="project-meta">
+              <span>Sustained Load Validation</span>
+              <span>50 Users</span>
+            </div>
+            <div class="case-screenshot-placeholders">
+              <figure class="case-screenshot-card">
+                <button class="case-screenshot-trigger" type="button" data-lightbox-image="../images/project-screenshots/ai-infrastructure-platform/benchmark-50users-grafana.png">
+                  <img
+                    src="../images/project-screenshots/ai-infrastructure-platform/benchmark-50users-grafana.png"
+                    alt="Grafana dashboard showing NovaLab AI runtime metrics during the 50-user benchmark"
+                  />
+                </button>
+                <figcaption>Grafana Runtime Metrics</figcaption>
+              </figure>
+              <figure class="case-screenshot-card">
+                <button class="case-screenshot-trigger" type="button" data-lightbox-image="../images/project-screenshots/ai-infrastructure-platform/benchmark-50users-locust.png">
+                  <img
+                    src="../images/project-screenshots/ai-infrastructure-platform/benchmark-50users-locust.png"
+                    alt="Locust load test results for the NovaLab AI runtime 50-user benchmark"
+                  />
+                </button>
+                <figcaption>Locust Load Test Results</figcaption>
+              </figure>
+              <figure class="case-screenshot-card">
+                <button class="case-screenshot-trigger" type="button" data-lightbox-image="../images/project-screenshots/ai-infrastructure-platform/benchmark-50users-nvidia-smi.png">
+                  <img
+                    src="../images/project-screenshots/ai-infrastructure-platform/benchmark-50users-nvidia-smi.png"
+                    alt="NVIDIA GPU validation output during the NovaLab AI runtime 50-user benchmark"
+                  />
+                </button>
+                <figcaption>NVIDIA GPU Validation</figcaption>
+              </figure>
+            </div>
+            <p>
+              Sustained load test showing approximately 1440 generation tokens/sec, 100% GPU utilization, 249W power
+              draw, and zero queued requests.
+            </p>
+          </div>
+        </div>
+
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">Matt's Notes</p>
+            <h2>What the benchmarks changed</h2>
+          </div>
+          <div class="case-notes-copy">
+            <p>
+              I expected the 25-user test to show the beginning of saturation. It did not. The 50-user test pushed the
+              GPU to 100%, but the platform still showed no queued requests and no failures.
+            </p>
+            <p>
+              The biggest surprise was the temperature. Seeing the RTX 3090 hold around 56 degrees C under sustained
+              inference load gave me a lot more confidence in both the card and the platform design.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
         <div class="case-lesson-callout reveal">
           <p class="eyebrow">Primary Lesson</p>
           <blockquote>
@@ -318,6 +579,11 @@
       <span>Matt Smalling</span>
       <span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span>
     </footer>
+
+    <div class="image-lightbox" data-image-lightbox hidden>
+      <button class="image-lightbox-close" type="button" data-lightbox-close aria-label="Close image preview">Close</button>
+      <img alt="" data-lightbox-full-image />
+    </div>
 
     <script src="../src/main.js"></script>
   </body>

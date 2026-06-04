@@ -64,3 +64,43 @@ const sectionObserver = new IntersectionObserver(
 sections.forEach((section) => sectionObserver.observe(section));
 window.addEventListener("scroll", setHeaderState, { passive: true });
 setHeaderState();
+
+const imageLightbox = document.querySelector("[data-image-lightbox]");
+const lightboxImage = document.querySelector("[data-lightbox-full-image]");
+const lightboxClose = document.querySelector("[data-lightbox-close]");
+const lightboxTriggers = [...document.querySelectorAll("[data-lightbox-image]")];
+
+const closeImageLightbox = () => {
+  if (!imageLightbox || !lightboxImage) return;
+
+  imageLightbox.hidden = true;
+  document.body.classList.remove("lightbox-open");
+  lightboxImage.removeAttribute("src");
+  lightboxImage.removeAttribute("alt");
+};
+
+const openImageLightbox = (trigger) => {
+  if (!imageLightbox || !lightboxImage) return;
+
+  const image = trigger.querySelector("img");
+  lightboxImage.src = trigger.dataset.lightboxImage;
+  lightboxImage.alt = image?.alt || "Full-size benchmark screenshot";
+  imageLightbox.hidden = false;
+  document.body.classList.add("lightbox-open");
+};
+
+lightboxTriggers.forEach((trigger) => {
+  trigger.addEventListener("click", () => openImageLightbox(trigger));
+});
+
+if (lightboxClose) {
+  lightboxClose.addEventListener("click", closeImageLightbox);
+}
+
+if (imageLightbox) {
+  imageLightbox.addEventListener("click", (event) => {
+    if (event.target === imageLightbox) {
+      closeImageLightbox();
+    }
+  });
+}

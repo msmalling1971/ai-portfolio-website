@@ -570,6 +570,73 @@ h3 {
     rgba(20, 25, 31, 0.84);
 }
 
+.mentorship-intro,
+.learning-tracks-panel,
+.mentorship-notes {
+  border: 1px solid var(--line);
+  background: rgba(29, 35, 43, 0.72);
+  box-shadow: var(--shadow);
+}
+
+.mentorship-intro {
+  max-width: 940px;
+  padding: clamp(24px, 4vw, 38px);
+  background:
+    linear-gradient(135deg, rgba(126, 160, 183, 0.09), transparent 44%),
+    rgba(29, 35, 43, 0.72);
+}
+
+.mentorship-intro p {
+  color: var(--muted);
+  font-size: 1.04rem;
+}
+
+.mentorship-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.mentorship-grid {
+  margin-top: 18px;
+}
+
+.learning-tracks-panel {
+  margin-top: 18px;
+  padding: clamp(22px, 4vw, 34px);
+  background:
+    repeating-linear-gradient(90deg, rgba(241, 234, 223, 0.035) 0 1px, transparent 1px 82px),
+    rgba(20, 25, 31, 0.84);
+}
+
+.learning-track-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-track-list li {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  color: var(--steel);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(126, 160, 183, 0.06);
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.mentorship-notes {
+  margin-top: 18px;
+  padding: clamp(28px, 5vw, 54px);
+  background:
+    linear-gradient(135deg, rgba(197, 139, 59, 0.12), transparent 42%),
+    rgba(29, 35, 43, 0.78);
+}
+
 .placement-intro {
   display: flex;
   align-items: end;

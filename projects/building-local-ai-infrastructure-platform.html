@@ -494,6 +494,129 @@
           </div>
         </div>
 
+        <div class="section-heading benchmark-subheading reveal">
+          <p class="eyebrow">Implementation Notes</p>
+          <h2>Dashboard v1.1 added host separation and custom GPU telemetry.</h2>
+          <p>
+            These notes document what was actually configured: the vLLM runtime command, Prometheus scrape targets,
+            Node Exporter textfile collection, the GPU metrics script, and the systemd timer that keeps the dashboard
+            current.
+          </p>
+        </div>
+
+        <div class="case-implementation-grid">
+          <article class="case-detail case-implementation-note reveal">
+            <span>Runtime</span>
+            <h3>vLLM startup command</h3>
+            <p>CT202 serves Qwen/Qwen2.5-7B-Instruct through vLLM on port 8000.</p>
+            <pre class="case-code-block"><code>source ~/vllm-env/bin/activate
+vllm serve Qwen/Qwen2.5-7B-Instruct \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --tensor-parallel-size 1 \
+  --gpu-memory-utilization 0.90 \
+  --max-model-len 8192</code></pre>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Scraping</span>
+            <h3>Prometheus scrape jobs</h3>
+            <p>
+              CT203 runs Prometheus and Grafana. Prometheus scrapes the vLLM metrics endpoint and the CT202 Node
+              Exporter endpoint.
+            </p>
+            <pre class="case-code-block"><code>vLLM scrape target:
+192.168.50.104:8000
+
+CT202 node exporter scrape target:
+192.168.50.104:9100</code></pre>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Node Exporter</span>
+            <h3>Textfile collector</h3>
+            <p>CT202 exposes custom GPU metrics by enabling the Node Exporter textfile collector.</p>
+            <pre class="case-code-block"><code>/etc/default/prometheus-node-exporter
+ARGS="--collector.textfile.directory=/var/lib/node_exporter/textfile_collector"</code></pre>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>GPU Metrics</span>
+            <h3>Custom exporter script</h3>
+            <p>
+              The gpu-metrics.sh script uses nvidia-smi and writes gpu.prom for Node Exporter. It collects utilization,
+              temperature, power draw, and VRAM usage.
+            </p>
+            <pre class="case-code-block"><code>#!/usr/bin/env bash
+set -euo pipefail
+
+OUT="/var/lib/node_exporter/textfile_collector/gpu.prom"
+TMP="${OUT}.$$"
+
+read -r GPU_UTIL GPU_TEMP GPU_POWER GPU_MEM_USED &lt; &lt;(
+  nvidia-smi --query-gpu=utilization.gpu,temperature.gpu,power.draw,memory.used \
+    --format=csv,noheader,nounits | head -n 1 | tr -d ','
+)
+
+cat &gt; "$TMP" &lt;&lt;EOF
+# HELP gpu_utilization_percent GPU utilization percentage from nvidia-smi.
+# TYPE gpu_utilization_percent gauge
+gpu_utilization_percent $GPU_UTIL
+# HELP gpu_temperature_celsius GPU temperature in Celsius from nvidia-smi.
+# TYPE gpu_temperature_celsius gauge
+gpu_temperature_celsius $GPU_TEMP
+# HELP gpu_power_watts GPU power draw in watts from nvidia-smi.
+# TYPE gpu_power_watts gauge
+gpu_power_watts $GPU_POWER
+# HELP gpu_memory_used_mb GPU memory used in MB from nvidia-smi.
+# TYPE gpu_memory_used_mb gauge
+gpu_memory_used_mb $GPU_MEM_USED
+EOF
+
+mv "$TMP" "$OUT"</code></pre>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Automation</span>
+            <h3>systemd service and timer</h3>
+            <p>
+              gpu-metrics.service runs the exporter, and gpu-metrics.timer runs it every 15 seconds so Grafana has a
+              current GPU view without Prometheus shelling out to nvidia-smi.
+            </p>
+            <pre class="case-code-block"><code># gpu-metrics.service
+[Unit]
+Description=Collect NVIDIA GPU metrics for Node Exporter
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/gpu-metrics.sh
+
+# gpu-metrics.timer
+[Unit]
+Description=Run GPU metrics collection every 15 seconds
+
+[Timer]
+OnBootSec=15s
+OnUnitActiveSec=15s
+Unit=gpu-metrics.service
+
+[Install]
+WantedBy=timers.target</code></pre>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Dashboard v1.1</span>
+            <h3>Separated host and GPU views</h3>
+            <p>
+              The dashboard now separates CT203 observability host metrics from CT202 AI runtime host metrics. GPU
+              panels include utilization, temperature, power draw, and VRAM usage.
+            </p>
+            <p>
+              With Qwen 2.5 7B loaded and idle/ready, the RTX 3090 showed about 21,996 MB of VRAM used.
+            </p>
+          </article>
+        </div>
+
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
             <p class="eyebrow">Matt's Notes</p>

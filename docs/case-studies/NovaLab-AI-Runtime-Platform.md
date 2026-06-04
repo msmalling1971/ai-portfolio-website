@@ -259,6 +259,115 @@ Raw counters continuously increase. They are useful, but they do not directly sh
 
 This was an important observability lesson: a metric can be valid and still answer the wrong operational question.
 
+## Implementation Notes: Dashboard v1.1
+
+Dashboard v1.1 added the missing host and GPU telemetry needed to separate the observability server from the AI runtime server. The goal was practical: make it clear what CT203 is doing as the monitoring/load-testing host, and what CT202 is doing as the vLLM/GPU runtime host.
+
+### vLLM runtime startup command
+
+CT202 serves `Qwen/Qwen2.5-7B-Instruct` through vLLM on port `8000`:
+
+```bash
+source ~/vllm-env/bin/activate
+vllm serve Qwen/Qwen2.5-7B-Instruct \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --tensor-parallel-size 1 \
+  --gpu-memory-utilization 0.90 \
+  --max-model-len 8192
+```
+
+### Prometheus scrape jobs
+
+CT203 runs Prometheus and Grafana. Prometheus scrapes the vLLM runtime on CT202 and the CT202 Node Exporter endpoint:
+
+```text
+vLLM scrape target:
+192.168.50.104:8000
+
+CT202 node exporter scrape target:
+192.168.50.104:9100
+```
+
+### Node Exporter textfile collector
+
+The Node Exporter textfile collector is enabled on CT202 so custom GPU metrics can be written as Prometheus-formatted files:
+
+```text
+/etc/default/prometheus-node-exporter
+ARGS="--collector.textfile.directory=/var/lib/node_exporter/textfile_collector"
+```
+
+### Custom GPU metrics exporter
+
+The `gpu-metrics.sh` script uses `nvidia-smi` to collect GPU utilization, temperature, power draw, and VRAM usage. It writes the current values to `gpu.prom`, which Node Exporter exposes through the textfile collector.
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT="/var/lib/node_exporter/textfile_collector/gpu.prom"
+TMP="${OUT}.$$"
+
+read -r GPU_UTIL GPU_TEMP GPU_POWER GPU_MEM_USED < <(
+  nvidia-smi --query-gpu=utilization.gpu,temperature.gpu,power.draw,memory.used \
+    --format=csv,noheader,nounits | head -n 1 | tr -d ','
+)
+
+cat > "$TMP" <<EOF
+# HELP gpu_utilization_percent GPU utilization percentage from nvidia-smi.
+# TYPE gpu_utilization_percent gauge
+gpu_utilization_percent $GPU_UTIL
+# HELP gpu_temperature_celsius GPU temperature in Celsius from nvidia-smi.
+# TYPE gpu_temperature_celsius gauge
+gpu_temperature_celsius $GPU_TEMP
+# HELP gpu_power_watts GPU power draw in watts from nvidia-smi.
+# TYPE gpu_power_watts gauge
+gpu_power_watts $GPU_POWER
+# HELP gpu_memory_used_mb GPU memory used in MB from nvidia-smi.
+# TYPE gpu_memory_used_mb gauge
+gpu_memory_used_mb $GPU_MEM_USED
+EOF
+
+mv "$TMP" "$OUT"
+```
+
+### systemd automation
+
+The exporter is automated with `gpu-metrics.service` and `gpu-metrics.timer`. The timer runs every 15 seconds so Grafana can show near-real-time GPU state without running `nvidia-smi` from Prometheus directly.
+
+`gpu-metrics.service`:
+
+```ini
+[Unit]
+Description=Collect NVIDIA GPU metrics for Node Exporter
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/gpu-metrics.sh
+```
+
+`gpu-metrics.timer`:
+
+```ini
+[Unit]
+Description=Run GPU metrics collection every 15 seconds
+
+[Timer]
+OnBootSec=15s
+OnUnitActiveSec=15s
+Unit=gpu-metrics.service
+
+[Install]
+WantedBy=timers.target
+```
+
+### Grafana Dashboard v1.1
+
+Dashboard v1.1 now separates CT203 observability host metrics from CT202 AI runtime host metrics. The GPU section includes utilization, temperature, power draw, and VRAM usage.
+
+With `Qwen/Qwen2.5-7B-Instruct` loaded and the runtime idle/ready, the RTX 3090 showed about `21,996 MB` of VRAM used. That baseline matters because it distinguishes model residency from benchmark-driven memory changes.
+
 ## Locust Test Methodology
 
 Locust was installed in a Python virtual environment on CT203:

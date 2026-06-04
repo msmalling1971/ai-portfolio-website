@@ -618,7 +618,6 @@ h3 {
 
 .learning-track-list li {
   border: 1px solid var(--line);
-  padding: 8px 10px;
   color: var(--steel);
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -627,6 +626,18 @@ h3 {
   background: rgba(126, 160, 183, 0.06);
   overflow-wrap: anywhere;
   word-break: normal;
+}
+
+.learning-track-list a {
+  display: block;
+  padding: 8px 10px;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.learning-track-list a:hover,
+.learning-track-list a:focus-visible {
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text);
 }
 
 .mentorship-notes {

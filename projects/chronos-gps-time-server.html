@@ -202,6 +202,42 @@ chronyc tracking</code></pre>
       <section class="section">
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
+            <p class="eyebrow">Matt's Notes</p>
+            <h2>The GPS receiver behaved better than the platform underneath it.</h2>
+          </div>
+          <div class="case-notes-copy">
+            <h3>What surprised me</h3>
+            <ul>
+              <li>The GPS side was easier than the platform stability problem.</li>
+              <li>The GR-U01 got a 3D GPS fix indoors near a window.</li>
+              <li>The NVMe SMART data was clean even while the first Pi showed filesystem and I/O issues.</li>
+            </ul>
+            <h3>What broke</h3>
+            <ul>
+              <li>The first Raspberry Pi showed EXT4 issues, input/output errors, and disappearing commands.</li>
+              <li>Historical undervoltage/throttling showed as throttled=0x50000.</li>
+              <li>PPS appeared as /dev/pps0, but ppstest timed out waiting for pulses.</li>
+            </ul>
+            <h3>What I learned</h3>
+            <ul>
+              <li>A clean SSD SMART report does not rule out cable, power, or board-level instability.</li>
+              <li>On Raspberry Pi 5, NVMe boot depends heavily on stable power, cable quality, and PCIe ribbon seating.</li>
+              <li>GPSD can work fine even when PPS still needs more investigation.</li>
+            </ul>
+            <h3>What I would do differently</h3>
+            <ul>
+              <li>Start with a known-good USB-C cable.</li>
+              <li>Check vcgencmd get_throttled early.</li>
+              <li>Validate storage stability before installing the full GPS/NTP stack.</li>
+              <li>Use a smaller dedicated NVMe for the final build.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
             <p class="eyebrow">Current Status</p>
             <h2>Chron0s-01 base platform is stable on the second Raspberry Pi 5.</h2>
           </div>

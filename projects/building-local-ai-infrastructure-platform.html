@@ -619,100 +619,230 @@ WantedBy=timers.target</code></pre>
 
         <div class="section-heading benchmark-subheading reveal">
           <p class="eyebrow">Model Evaluation</p>
-          <h2>Qwen3 14B Model Evaluation</h2>
+          <h2>Qwen3-14B-AWQ vLLM Evaluation</h2>
           <p>
-            After Dashboard v1.1 was in place, the next lab check was whether CT202 could move from the Qwen 2.5 7B
-            baseline to a 14B-class model on the same RTX 3090 24GB.
+            This test evaluated whether Qwen3-14B-AWQ could run reliably on a single RTX 3090 24GB using vLLM,
+            OpenWebUI, Prometheus, Grafana, and GPU telemetry.
           </p>
+        </div>
+
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Evaluation Goal</span>
+            <p>
+              The goal was not just to get a model process running. The real check was whether the runtime, API,
+              frontend, and telemetry stack could make the model usable and understandable on homelab hardware.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Current Status</span>
+            <p>
+              Qwen3-14B-AWQ is successfully running under vLLM on the RTX 3090. OpenWebUI can connect to it, API
+              testing works, and Grafana captures GPU/runtime telemetry.
+            </p>
+          </article>
         </div>
 
         <div class="case-implementation-grid">
           <article class="case-detail case-implementation-note reveal">
-            <span>Full Model</span>
-            <h3>Qwen3-14B failed during engine initialization</h3>
+            <span>OOM Investigation</span>
+            <h3>Qwen3-14B failed with CUDA out-of-memory</h3>
             <p>
-              Qwen/Qwen3-14B was attempted through vLLM on CT202. vLLM launched, but the engine failed to initialize
-              because CUDA ran out of memory.
+              The non-quantized Qwen3-14B attempt failed when vLLM tried to allocate additional GPU memory while the
+              RTX 3090 was already near full VRAM usage.
             </p>
             <pre class="case-code-block"><code>torch.OutOfMemoryError: CUDA out of memory
-Tried to allocate 70 MiB
 GPU had ~23.55 GiB total capacity
-~23.47 GiB was already in use</code></pre>
+Only a small amount of VRAM was free</code></pre>
             <p>
-              The full 14B model exceeded the practical VRAM limit of a single RTX 3090 under this vLLM configuration.
+              That confirmed full precision / larger model loading was not practical on a single 24GB card without
+              quantization or model parallelism.
             </p>
           </article>
 
           <article class="case-detail case-implementation-note reveal">
-            <span>Quantized Model</span>
-            <h3>Qwen3-14B-AWQ loaded successfully</h3>
+            <span>Operational Takeaway</span>
+            <h3>24GB VRAM is usable, but format matters</h3>
             <p>
-              Qwen/Qwen3-14B-AWQ loaded through vLLM on the same CT202 host and was exposed through the
-              OpenAI-compatible API.
-            </p>
-            <pre class="case-code-block"><code>http://192.168.50.104:8000/v1</code></pre>
-            <p>
-              OpenWebUI discovered the model. A direct /v1/chat/completions test returned a valid response, and an
-              OpenWebUI chat test also worked.
+              The RTX 3090 is still a very useful local AI card, but model format and quantization matter more than
+              parameter count alone. The same class of model can fail or run depending on how it is packaged.
             </p>
           </article>
 
           <article class="case-detail case-implementation-note reveal">
-            <span>Telemetry</span>
-            <h3>Observed Qwen3-14B-AWQ behavior</h3>
+            <span>Quantization</span>
+            <h3>Why Quantization Matters</h3>
+            <p>
+              Quantization reduces model weight precision, which lowers VRAM requirements. AWQ allowed the 14B model
+              to fit where the non-quantized model failed.
+            </p>
+            <p>
+              The tradeoff is possible small quality loss, but the deployability improvement on consumer GPUs is huge.
+              For homelab AI infrastructure, quantization turns "the model theoretically exists" into "the model
+              actually runs."
+            </p>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Successful Runtime</span>
+            <h3>Qwen/Qwen3-14B-AWQ served through vLLM</h3>
             <ul class="case-metric-list">
-              <li><span>VRAM loaded/idle</span><strong>~20,904 MB</strong></li>
-              <li><span>GPU utilization</span><strong>Up to 100%</strong></li>
-              <li><span>GPU power</span><strong>Up to ~249 W</strong></li>
-              <li><span>GPU temperature</span><strong>~36&deg;C</strong></li>
-              <li><span>Average latency</span><strong>~8.09 sec</strong></li>
-              <li><span>P95 latency</span><strong>~14.5 sec</strong></li>
+              <li><span>Model</span><strong>Qwen/Qwen3-14B-AWQ</strong></li>
+              <li><span>Runtime</span><strong>vLLM 0.22.0</strong></li>
+              <li><span>API</span><strong>OpenAI-compatible :8000</strong></li>
+              <li><span>Frontend</span><strong>OpenWebUI</strong></li>
+              <li><span>GPU</span><strong>RTX 3090 24GB</strong></li>
             </ul>
-          </article>
-
-          <article class="case-detail case-implementation-note reveal">
-            <span>Takeaway</span>
-            <h3>Quantization changed the outcome</h3>
             <p>
-              Quantization made the difference between failure and success on the same RTX 3090. Full Qwen3-14B
-              exceeded available VRAM, while Qwen3-14B-AWQ fit and served successfully.
-            </p>
-            <p>
-              The test showed why model precision, quantization, context length, and GPU memory matter when sizing
-              local AI infrastructure. It also proved the value of the Grafana dashboard because VRAM, utilization,
-              power, temperature, and latency made the difference visible.
+              vLLM served /v1/models and /v1/chat/completions successfully. OpenWebUI displayed and used the
+              Qwen3-14B-AWQ model successfully.
             </p>
           </article>
         </div>
 
-        <div class="case-table-panel model-comparison-panel reveal" aria-label="Qwen model evaluation comparison">
+        <article class="case-detail case-implementation-note reveal">
+          <span>Validation Commands</span>
+          <h3>Runtime, API, and telemetry checks</h3>
+          <pre class="case-code-block"><code>ps -ef | grep vllm
+ss -tulpn | grep 8000
+curl http://localhost:8000/health
+curl http://localhost:8000/v1/models
+nvidia-smi
+cat /var/lib/node_exporter/textfile_collector/gpu.prom
+curl http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen/Qwen3-14B-AWQ",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Explain Terraform state locking in plain English."
+      }
+    ],
+    "max_tokens": 200
+  }'</code></pre>
+        </article>
+
+        <div class="case-resolution benchmark-callout reveal">
+          <p class="eyebrow">3090 VRAM Utilization</p>
+          <h2>Qwen3-14B-AWQ ran close to the card's practical VRAM ceiling.</h2>
+          <p>
+            Qwen3-14B-AWQ used roughly 20.9GB to 22GB of RTX 3090 VRAM while loaded. nvidia-smi showed around
+            20902MiB to 21996MiB used during testing. GPU power ranged from low idle values around 23W up to roughly
+            249W during active generation, utilization reached 100% during prompt generation, and temperature stayed
+            reasonable at around 29C to 36C in the screenshots.
+          </p>
+        </div>
+
+        <div class="section-heading benchmark-subheading reveal">
+          <p class="eyebrow">Grafana Observability</p>
+          <h2>The dashboard connected model behavior to GPU pressure, latency, and request activity.</h2>
+          <p>
+            Grafana made it possible to correlate model behavior with GPU load, VRAM pressure, latency, and request
+            activity instead of guessing from a terminal window.
+          </p>
+        </div>
+
+        <div class="case-outcome-dashboard reveal" aria-label="Qwen3-14B-AWQ Grafana dashboard panels">
+          <article><span>Host</span><strong>CT202 CPU Usage %</strong></article>
+          <article><span>Host</span><strong>CT202 Memory Usage %</strong></article>
+          <article><span>Host</span><strong>CT202 Disk Usage %</strong></article>
+          <article><span>Throughput</span><strong>Current Model Prompt Tokens/sec</strong></article>
+          <article><span>Throughput</span><strong>Current Model Generation Tokens/sec</strong></article>
+          <article><span>Queue</span><strong>vLLM num_requests_waiting</strong></article>
+          <article><span>Runtime</span><strong>vLLM num_requests_running</strong></article>
+          <article><span>Latency</span><strong>P95 Request Latency</strong></article>
+          <article><span>Latency</span><strong>Average Request Latency</strong></article>
+          <article><span>GPU</span><strong>RTX 3090 GPU Util %</strong></article>
+          <article><span>GPU</span><strong>RTX 3090 GPU Power (W)</strong></article>
+          <article><span>GPU</span><strong>RTX 3090 GPU Temp (C)</strong></article>
+          <article><span>GPU</span><strong>RTX 3090 VRAM Used (MB)</strong></article>
+          <article><span>Runtime Memory</span><strong>KV Cache Usage %</strong></article>
+        </div>
+
+        <div class="section-heading benchmark-subheading reveal">
+          <p class="eyebrow">Architecture Diagram</p>
+          <h2>OpenWebUI talks to vLLM, vLLM runs the AWQ model, and Prometheus/Grafana watch the runtime.</h2>
+        </div>
+        <div class="case-flow-panel reveal">
+          <div class="case-flow">
+            <span>Request Path</span>
+            <ol>
+              <li>OpenWebUI</li>
+              <li>vLLM OpenAI-compatible API :8000</li>
+              <li>Qwen3-14B-AWQ</li>
+              <li>RTX 3090 24GB</li>
+            </ol>
+          </div>
+          <div class="case-layer-map">
+            <article><span>Prometheus Scrapes</span><strong>vLLM /metrics, Node exporter, GPU textfile collector</strong></article>
+            <article><span>Grafana Visualizes</span><strong>Request metrics, tokens/sec, latency, GPU utilization, power, temperature, and VRAM usage</strong></article>
+          </div>
+        </div>
+
+        <div class="case-benchmark-evidence reveal" aria-label="Qwen3-14B-AWQ screenshot placeholders">
+          <div class="case-evidence-group">
+            <div class="project-meta">
+              <span>Screenshot Placeholders</span>
+              <span>TODO</span>
+            </div>
+            <div class="case-detail-grid">
+              <!-- TODO: Add screenshot at ../images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-grafana.png -->
+              <article class="case-detail reveal">
+                <span>TODO Image</span>
+                <h3>qwen3-14b-awq-grafana.png</h3>
+                <p>Final Grafana dashboard screenshot during a controlled Qwen3-14B-AWQ test.</p>
+              </article>
+              <!-- TODO: Add screenshot at ../images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-openwebui.png -->
+              <article class="case-detail reveal">
+                <span>TODO Image</span>
+                <h3>qwen3-14b-awq-openwebui.png</h3>
+                <p>OpenWebUI showing the Qwen3-14B-AWQ model connected through the vLLM endpoint.</p>
+              </article>
+              <!-- TODO: Add screenshot at ../images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-nvidia-smi.png -->
+              <article class="case-detail reveal">
+                <span>TODO Image</span>
+                <h3>qwen3-14b-awq-nvidia-smi.png</h3>
+                <p>nvidia-smi output showing RTX 3090 VRAM, utilization, power, and temperature during testing.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading benchmark-subheading reveal">
+          <p class="eyebrow">Model Comparison Notes</p>
+          <h2>The AWQ model was the practical 14B path on a single RTX 3090.</h2>
+        </div>
+
+        <div class="case-table-panel model-comparison-panel reveal" aria-label="Qwen3-14B-AWQ model comparison notes">
           <table class="case-benchmark-table model-comparison-table">
             <thead>
               <tr>
                 <th>Model</th>
-                <th>Runtime</th>
                 <th>Result</th>
                 <th>Notes</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Qwen2.5-7B-Instruct</th>
-                <td>vLLM</td>
-                <td>Successful</td>
-                <td>Baseline working model</td>
-              </tr>
-              <tr>
-                <th scope="row">Qwen3-14B</th>
-                <td>vLLM</td>
+                <th scope="row">Qwen3-14B non-quantized</th>
                 <td>Failed</td>
-                <td>CUDA OOM on RTX 3090 24GB</td>
+                <td>CUDA OOM on a single RTX 3090</td>
               </tr>
               <tr>
                 <th scope="row">Qwen3-14B-AWQ</th>
-                <td>vLLM</td>
                 <td>Successful</td>
-                <td>Quantized 14B model ran successfully at ~20.9GB VRAM</td>
+                <td>Successful on a single RTX 3090</td>
+              </tr>
+              <tr>
+                <th scope="row">Qwen2.5-7B-Instruct</th>
+                <td>Successful baseline</td>
+                <td>Lower VRAM, faster/smaller baseline</td>
+              </tr>
+              <tr>
+                <th scope="row">GPT-OSS 20B</th>
+                <td>Not yet fully evaluated in vLLM</td>
+                <td>Previously liked in Ollama; needs compatible vLLM model format review</td>
               </tr>
             </tbody>
           </table>
@@ -721,18 +851,62 @@ GPU had ~23.55 GiB total capacity
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
             <p class="eyebrow">Matt's Notes</p>
-            <h2>What the benchmarks changed</h2>
+            <h2>Quantization was the difference between almost fits and actually runs.</h2>
+          </div>
+          <div class="case-notes-copy">
+            <h3>What surprised me</h3>
+            <ul>
+              <li>A 14B model can still fail on a 24GB RTX 3090 depending on format and precision.</li>
+              <li>The quantized AWQ version worked where the non-quantized version failed.</li>
+              <li>Grafana made the VRAM and GPU utilization story obvious.</li>
+            </ul>
+            <h3>What broke</h3>
+            <ul>
+              <li>The non-quantized Qwen3-14B run failed with CUDA out-of-memory.</li>
+              <li>The RTX 3090 had almost no free VRAM left during the failed load.</li>
+              <li>The first assumption that "14B should fit" was too simplistic.</li>
+            </ul>
+            <h3>What I learned</h3>
+            <ul>
+              <li>Quantization matters as much as parameter count.</li>
+              <li>AWQ can make larger models practical on consumer GPUs.</li>
+              <li>Observability is not optional when building local AI infrastructure.</li>
+            </ul>
+            <h3>What I would do differently</h3>
+            <ul>
+              <li>Check quantized model options first.</li>
+              <li>Capture nvidia-smi and Grafana screenshots during every test.</li>
+              <li>Compare models with the same prompts and load profile.</li>
+              <li>Treat VRAM like a budget, not a suggestion.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">Current Status</p>
+            <h2>Qwen3-14B-AWQ is successfully running under vLLM on the RTX 3090.</h2>
           </div>
           <div class="case-notes-copy">
             <p>
-              I expected the 25-user test to show the beginning of saturation. It did not. The 50-user test pushed the
-              GPU to 100%, but the platform still showed no queued requests and no failures.
-            </p>
-            <p>
-              The biggest surprise was the temperature. Seeing the RTX 3090 hold around 56 degrees C under sustained
-              inference load gave me a lot more confidence in both the card and the platform design.
+              OpenWebUI can connect to it, API testing works, and Grafana captures GPU/runtime telemetry. The
+              non-quantized 14B model failed with CUDA OOM, making AWQ quantization the practical path for this GPU.
             </p>
           </div>
+        </div>
+
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Next Steps</p>
+            <h2>Turn the successful single-model test into a measured runtime comparison.</h2>
+          </div>
+          <ul class="case-roadmap" aria-label="Qwen3-14B-AWQ next steps">
+            <li>Capture final Grafana screenshots</li>
+            <li>Run a small Locust load test</li>
+            <li>Compare against Qwen2.5-7B</li>
+            <li>Evaluate GPT-OSS 20B in vLLM</li>
+            <li>Add RAG as the next phase</li>
+          </ul>
         </div>
       </section>
 

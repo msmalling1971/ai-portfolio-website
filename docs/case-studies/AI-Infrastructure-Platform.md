@@ -322,6 +322,178 @@ Then:
 AI Platform Engineering
 
 =========================================================
+Qwen3-14B-AWQ vLLM Evaluation
+=========================================================
+
+Evaluation Goal
+---------------------------------------------------------
+
+This test evaluated whether Qwen3-14B-AWQ could run reliably on a single RTX 3090 24GB using vLLM, OpenWebUI, Prometheus, Grafana, and GPU telemetry.
+
+The point was not just "can the model start?" The point was whether the runtime, API, frontend, and observability stack could make the model usable and understandable on real homelab hardware.
+
+OOM Investigation
+---------------------------------------------------------
+
+- The non-quantized Qwen3-14B attempt failed with CUDA out-of-memory.
+- The log showed the model trying to allocate additional GPU memory while the RTX 3090 was already near full VRAM usage.
+- The system reported roughly 23.55 GiB total GPU capacity with only a small amount free.
+- This confirmed that full precision / larger model loading was not practical on a single 24GB card without quantization or model parallelism.
+- Operational takeaway: 24GB VRAM is usable, but model format and quantization matter more than parameter count alone.
+
+Why Quantization Matters
+---------------------------------------------------------
+
+Quantization reduces model weight precision. In plain English, the model uses a smaller representation for its weights, which lowers VRAM requirements.
+
+AWQ allowed the 14B model to fit where the non-quantized model failed. The tradeoff is possible small quality loss, but the deployability improvement on consumer GPUs is huge.
+
+For homelab AI infrastructure, quantization is what turns "the model theoretically exists" into "the model actually runs."
+
+Successful Runtime
+---------------------------------------------------------
+
+- Model: Qwen/Qwen3-14B-AWQ
+- Runtime: vLLM 0.22.0
+- API: OpenAI-compatible endpoint on port 8000
+- Frontend: OpenWebUI connected to the vLLM endpoint
+- GPU: RTX 3090 24GB
+- vLLM served /v1/models and /v1/chat/completions successfully.
+- OpenWebUI displayed and used the Qwen3-14B-AWQ model successfully.
+
+Validation Commands
+---------------------------------------------------------
+
+```bash
+ps -ef | grep vllm
+ss -tulpn | grep 8000
+curl http://localhost:8000/health
+curl http://localhost:8000/v1/models
+nvidia-smi
+cat /var/lib/node_exporter/textfile_collector/gpu.prom
+curl http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "Qwen/Qwen3-14B-AWQ",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Explain Terraform state locking in plain English."
+      }
+    ],
+    "max_tokens": 200
+  }'
+```
+
+3090 VRAM Utilization
+---------------------------------------------------------
+
+- Qwen3-14B-AWQ used roughly 20.9GB to 22GB of RTX 3090 VRAM while loaded.
+- nvidia-smi showed around 20902MiB to 21996MiB used during testing.
+- GPU power ranged from low idle values around 23W up to roughly 249W during active generation.
+- GPU utilization reached 100% during prompt generation.
+- Temperature stayed reasonable, observed around 29C to 36C during the screenshots.
+
+Grafana Observability
+---------------------------------------------------------
+
+Dashboard panels used:
+- CT202 CPU Usage %
+- CT202 Memory Usage %
+- CT202 Disk Usage %
+- Current Model Prompt Tokens/sec
+- Current Model Generation Tokens/sec
+- vLLM num_requests_waiting
+- vLLM num_requests_running
+- P95 Request Latency
+- Average Request Latency
+- RTX 3090 GPU Util %
+- RTX 3090 GPU Power (W)
+- RTX 3090 GPU Temp (C)
+- RTX 3090 VRAM Used (MB)
+- KV Cache Usage %
+
+The dashboard made it possible to correlate model behavior with GPU load, VRAM pressure, latency, and request activity.
+
+Screenshot Placeholders
+---------------------------------------------------------
+
+TODO: Add final screenshots when captured:
+- images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-grafana.png
+- images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-openwebui.png
+- images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-nvidia-smi.png
+
+Architecture Diagram
+---------------------------------------------------------
+
+```mermaid
+flowchart TD
+  OpenWebUI["OpenWebUI"] --> API["vLLM OpenAI-compatible API :8000"]
+  API --> Model["Qwen3-14B-AWQ"]
+  Model --> GPU["RTX 3090 24GB"]
+
+  Prometheus["Prometheus"] --> VLLMMetrics["vLLM /metrics"]
+  Prometheus --> NodeExporter["Node exporter"]
+  Prometheus --> GPUCollector["GPU textfile collector"]
+
+  Grafana["Grafana"] --> RequestMetrics["Request metrics"]
+  Grafana --> Tokens["Tokens/sec"]
+  Grafana --> Latency["Latency"]
+  Grafana --> GPUUtil["GPU utilization"]
+  Grafana --> GPUPower["GPU power"]
+  Grafana --> GPUTemp["GPU temperature"]
+  Grafana --> VRAM["VRAM usage"]
+```
+
+Model Comparison Notes
+---------------------------------------------------------
+
+| Model | Result | Notes |
+| --- | --- | --- |
+| Qwen3-14B non-quantized | Failed | CUDA OOM on a single RTX 3090 |
+| Qwen3-14B-AWQ | Successful | Ran successfully on a single RTX 3090 |
+| Qwen2.5-7B-Instruct | Successful baseline | Lower VRAM, faster/smaller baseline |
+| GPT-OSS 20B | Not yet fully evaluated in vLLM | Previously liked in Ollama; needs compatible vLLM model format review |
+
+Matt's Notes
+---------------------------------------------------------
+
+What surprised me:
+- A 14B model can still fail on a 24GB RTX 3090 depending on format and precision.
+- The quantized AWQ version worked where the non-quantized version failed.
+- Grafana made the VRAM and GPU utilization story obvious.
+
+What broke:
+- The non-quantized Qwen3-14B run failed with CUDA out-of-memory.
+- The RTX 3090 had almost no free VRAM left during the failed load.
+- The first assumption that "14B should fit" was too simplistic.
+
+What I learned:
+- Quantization matters as much as parameter count.
+- AWQ can make larger models practical on consumer GPUs.
+- Observability is not optional when building local AI infrastructure.
+
+What I would do differently:
+- Check quantized model options first.
+- Capture nvidia-smi and Grafana screenshots during every test.
+- Compare models with the same prompts and load profile.
+- Treat VRAM like a budget, not a suggestion.
+
+Current Status
+---------------------------------------------------------
+
+Status: Qwen3-14B-AWQ is successfully running under vLLM on the RTX 3090. OpenWebUI can connect to it, API testing works, and Grafana captures GPU/runtime telemetry. The non-quantized 14B model failed with CUDA OOM, making AWQ quantization the practical path for this GPU.
+
+Next Steps
+---------------------------------------------------------
+
+- Capture final Grafana screenshots during a controlled test.
+- Run a small Locust load test against Qwen3-14B-AWQ.
+- Compare tokens/sec and latency against Qwen2.5-7B.
+- Evaluate GPT-OSS 20B in vLLM if a compatible model format is available.
+- Add RAG as the next major platform phase.
+
+=========================================================
 Chron0s-01 GPS Time Server Rebuild
 =========================================================
 
@@ -398,6 +570,30 @@ PPS Status
 - gpsd reported pps:false.
 - Current status: GPS time works; PPS device exists but PPS pulse is not yet validated.
 - PPS investigation is deferred to a later phase.
+
+Matt's Notes
+---------------------------------------------------------
+
+What surprised me:
+- The GPS side was easier than the platform stability problem.
+- The GR-U01 got a 3D GPS fix indoors near a window.
+- The NVMe SMART data was clean even while the first Pi showed filesystem and I/O issues.
+
+What broke:
+- The first Raspberry Pi showed EXT4 issues, input/output errors, and disappearing commands.
+- Historical undervoltage/throttling showed as throttled=0x50000.
+- PPS appeared as /dev/pps0, but ppstest timed out waiting for pulses.
+
+What I learned:
+- A clean SSD SMART report does not rule out cable, power, or board-level instability.
+- On Raspberry Pi 5, NVMe boot depends heavily on stable power, cable quality, and PCIe ribbon seating.
+- GPSD can work fine even when PPS still needs more investigation.
+
+What I would do differently:
+- Start with a known-good USB-C cable.
+- Check vcgencmd get_throttled early.
+- Validate storage stability before installing the full GPS/NTP stack.
+- Use a smaller dedicated NVMe for the final build.
 
 Current Status
 ---------------------------------------------------------

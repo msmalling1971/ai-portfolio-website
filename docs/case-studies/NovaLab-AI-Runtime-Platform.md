@@ -368,6 +368,60 @@ Dashboard v1.1 now separates CT203 observability host metrics from CT202 AI runt
 
 With `Qwen/Qwen2.5-7B-Instruct` loaded and the runtime idle/ready, the RTX 3090 showed about `21,996 MB` of VRAM used. That baseline matters because it distinguishes model residency from benchmark-driven memory changes.
 
+## Qwen3 14B Model Evaluation
+
+After Dashboard v1.1 was in place, the next lab check was whether the same CT202 runtime host could move from the Qwen 2.5 7B baseline to a 14B-class model. This was tested with both the full `Qwen/Qwen3-14B` model and the quantized `Qwen/Qwen3-14B-AWQ` model.
+
+### Qwen3-14B full model test
+
+The full `Qwen/Qwen3-14B` model was attempted through vLLM on CT202 using the RTX 3090 24GB. vLLM launched, but failed during engine initialization.
+
+Error summary:
+
+```text
+torch.OutOfMemoryError: CUDA out of memory
+Tried to allocate 70 MiB
+GPU had ~23.55 GiB total capacity
+~23.47 GiB was already in use
+```
+
+The plain-language takeaway: the full 14B model exceeded the practical VRAM limit of a single RTX 3090 under this vLLM configuration.
+
+### Qwen3-14B-AWQ quantized model test
+
+The quantized `Qwen/Qwen3-14B-AWQ` model loaded successfully through vLLM on the same CT202 runtime host.
+
+The model was exposed through the OpenAI-compatible vLLM API:
+
+```text
+http://192.168.50.104:8000/v1
+```
+
+OpenWebUI successfully discovered the model. A direct API test against `/v1/chat/completions` returned a valid response, and an OpenWebUI chat test also worked.
+
+### Observed telemetry during Qwen3-14B-AWQ testing
+
+- VRAM loaded/idle: ~20,904 MB
+- GPU utilization during response: up to 100%
+- GPU power during response: up to ~249 W
+- GPU temperature during response: ~36°C
+- Average latency observed: ~8.09 sec
+- P95 latency observed: ~14.5 sec
+
+### Model comparison
+
+| Model | Runtime | Result | Notes |
+| --- | --- | --- | --- |
+| Qwen2.5-7B-Instruct | vLLM | Successful | Baseline working model |
+| Qwen3-14B | vLLM | Failed | CUDA OOM on RTX 3090 24GB |
+| Qwen3-14B-AWQ | vLLM | Successful | Quantized 14B model ran successfully at ~20.9GB VRAM |
+
+### Operational takeaway
+
+Quantization made the difference between failure and success on the same RTX 3090. The full Qwen3-14B model exceeded available VRAM, while Qwen3-14B-AWQ fit and served successfully.
+
+This reinforced why model precision, quantization, context length, and GPU memory all matter when sizing local AI infrastructure. It also proved the value of the Grafana dashboard work: the difference between failure and success was visible through VRAM usage, GPU utilization, power draw, temperature, and latency.
+
 ## Locust Test Methodology
 
 Locust was installed in a Python virtual environment on CT203:

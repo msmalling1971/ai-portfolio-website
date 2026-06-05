@@ -617,6 +617,107 @@ WantedBy=timers.target</code></pre>
           </article>
         </div>
 
+        <div class="section-heading benchmark-subheading reveal">
+          <p class="eyebrow">Model Evaluation</p>
+          <h2>Qwen3 14B Model Evaluation</h2>
+          <p>
+            After Dashboard v1.1 was in place, the next lab check was whether CT202 could move from the Qwen 2.5 7B
+            baseline to a 14B-class model on the same RTX 3090 24GB.
+          </p>
+        </div>
+
+        <div class="case-implementation-grid">
+          <article class="case-detail case-implementation-note reveal">
+            <span>Full Model</span>
+            <h3>Qwen3-14B failed during engine initialization</h3>
+            <p>
+              Qwen/Qwen3-14B was attempted through vLLM on CT202. vLLM launched, but the engine failed to initialize
+              because CUDA ran out of memory.
+            </p>
+            <pre class="case-code-block"><code>torch.OutOfMemoryError: CUDA out of memory
+Tried to allocate 70 MiB
+GPU had ~23.55 GiB total capacity
+~23.47 GiB was already in use</code></pre>
+            <p>
+              The full 14B model exceeded the practical VRAM limit of a single RTX 3090 under this vLLM configuration.
+            </p>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Quantized Model</span>
+            <h3>Qwen3-14B-AWQ loaded successfully</h3>
+            <p>
+              Qwen/Qwen3-14B-AWQ loaded through vLLM on the same CT202 host and was exposed through the
+              OpenAI-compatible API.
+            </p>
+            <pre class="case-code-block"><code>http://192.168.50.104:8000/v1</code></pre>
+            <p>
+              OpenWebUI discovered the model. A direct /v1/chat/completions test returned a valid response, and an
+              OpenWebUI chat test also worked.
+            </p>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Telemetry</span>
+            <h3>Observed Qwen3-14B-AWQ behavior</h3>
+            <ul class="case-metric-list">
+              <li><span>VRAM loaded/idle</span><strong>~20,904 MB</strong></li>
+              <li><span>GPU utilization</span><strong>Up to 100%</strong></li>
+              <li><span>GPU power</span><strong>Up to ~249 W</strong></li>
+              <li><span>GPU temperature</span><strong>~36&deg;C</strong></li>
+              <li><span>Average latency</span><strong>~8.09 sec</strong></li>
+              <li><span>P95 latency</span><strong>~14.5 sec</strong></li>
+            </ul>
+          </article>
+
+          <article class="case-detail case-implementation-note reveal">
+            <span>Takeaway</span>
+            <h3>Quantization changed the outcome</h3>
+            <p>
+              Quantization made the difference between failure and success on the same RTX 3090. Full Qwen3-14B
+              exceeded available VRAM, while Qwen3-14B-AWQ fit and served successfully.
+            </p>
+            <p>
+              The test showed why model precision, quantization, context length, and GPU memory matter when sizing
+              local AI infrastructure. It also proved the value of the Grafana dashboard because VRAM, utilization,
+              power, temperature, and latency made the difference visible.
+            </p>
+          </article>
+        </div>
+
+        <div class="case-table-panel model-comparison-panel reveal" aria-label="Qwen model evaluation comparison">
+          <table class="case-benchmark-table model-comparison-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Runtime</th>
+                <th>Result</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Qwen2.5-7B-Instruct</th>
+                <td>vLLM</td>
+                <td>Successful</td>
+                <td>Baseline working model</td>
+              </tr>
+              <tr>
+                <th scope="row">Qwen3-14B</th>
+                <td>vLLM</td>
+                <td>Failed</td>
+                <td>CUDA OOM on RTX 3090 24GB</td>
+              </tr>
+              <tr>
+                <th scope="row">Qwen3-14B-AWQ</th>
+                <td>vLLM</td>
+                <td>Successful</td>
+                <td>Quantized 14B model ran successfully at ~20.9GB VRAM</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
             <p class="eyebrow">Matt's Notes</p>

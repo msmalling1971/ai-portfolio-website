@@ -320,3 +320,96 @@ AI Operations Agents
 
 Then:
 AI Platform Engineering
+
+=========================================================
+Chron0s-01 GPS Time Server Rebuild
+=========================================================
+
+Project Goal
+---------------------------------------------------------
+
+Chron0s-01 is a Raspberry Pi 5 based GPS/GNSS time server intended to provide reliable local NTP service for the homelab.
+
+The build uses:
+- chrony
+- gpsd
+- gpsd-clients
+- pps-tools
+
+The goal is simple: keep local infrastructure time sync available even when relying less on outside services, and learn the actual validation path instead of treating NTP like magic.
+
+Hardware Used
+---------------------------------------------------------
+
+- Raspberry Pi 5
+- NVMe boot drive
+- Pi 5 NVMe HAT/ribbon
+- USB GPS/GNSS receiver: u-blox M10 GR-U01
+- USB-C power supply and known-good USB-C cable
+- WiFi temporarily used during setup, with wired Ethernet planned later
+
+Build Notes and Troubleshooting
+---------------------------------------------------------
+
+- Initial boot worked, but the first Pi showed EXT4 filesystem issues, input/output errors, and commands disappearing.
+- The NVMe SMART report showed the Lexar NM790 was healthy: SMART passed, Critical Warning 0x0, Media and Data Integrity Errors 0, Error Information Log Entries 0.
+- Reseating the Pi 5 PCIe/NVMe ribbon helped temporarily.
+- Moving the NVMe/HAT stack to a second Raspberry Pi 5 and switching to a known-good USB-C cable resulted in stable operation.
+- The first Pi/cable combination had shown throttled=0x50000, meaning historical undervoltage/throttling.
+- The second Pi showed throttled=0x0, meaning no undervoltage or throttling events.
+- Working theory: the failures were most likely caused by power/cable instability or Pi #1 hardware behavior, not the NVMe drive.
+
+Useful Validation Commands
+---------------------------------------------------------
+
+```bash
+vcgencmd get_throttled
+vcgencmd measure_temp
+mount | grep " / "
+dmesg | grep -i nvme
+dmesg | grep -iE "error|i/o|ext4"
+sudo smartctl -a /dev/nvme0
+chronyd -v
+gpsd -V
+cgps -s
+gpspipe -r | head
+gpspipe -w -n 20
+ls -l /dev/pps*
+sudo ppstest /dev/pps0
+chronyc sources -v
+chronyc tracking
+```
+
+GPS/GNSS Validation
+---------------------------------------------------------
+
+The GR-U01 appeared as:
+- /dev/ttyUSB0
+- Prolific PL2303 USB serial bridge
+- u-blox M10 receiver detected by gpsd
+
+GPS achieved a 3D fix near a window. cgps showed satellite count, latitude/longitude, altitude, and 3D FIX. gpspipe confirmed live NMEA/JSON output from gpsd.
+
+PPS Status
+---------------------------------------------------------
+
+- /dev/pps0 existed.
+- ppstest found the PPS source but timed out waiting for pulses.
+- gpsd reported pps:false.
+- Current status: GPS time works; PPS device exists but PPS pulse is not yet validated.
+- PPS investigation is deferred to a later phase.
+
+Current Status
+---------------------------------------------------------
+
+Status: Chron0s-01 base platform is stable on the second Raspberry Pi 5. WiFi, SSH, NVMe boot, chrony, gpsd, GPS lock, and satellite monitoring are working. PPS remains unresolved.
+
+Next Steps
+---------------------------------------------------------
+
+- Let cgps -s run for several hours to monitor satellite stability.
+- Periodically check vcgencmd get_throttled.
+- Configure chrony to consume GPS time from gpsd.
+- Revisit PPS troubleshooting later.
+- Move to wired Ethernet/static IP when convenient.
+- Replace the oversized 1TB NM790 with the incoming 128GB NVMe for a permanent low-maintenance build.

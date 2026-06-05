@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Learning project placeholder for the Chron0s Raspberry Pi GPS time server." />
+    <meta name="description" content="Build log for the Chron0s-01 Raspberry Pi 5 GPS/GNSS time server rebuild, including NVMe troubleshooting, GPS validation, and PPS status." />
     <title>Chron0s Raspberry Pi GPS Time Server | Matt Smalling</title>
     <link rel="stylesheet" href="../src/styles.css" />
   </head>
@@ -15,10 +15,221 @@
       <nav class="site-nav" data-nav><a href="../index.html#about">About</a><a href="../index.html#mentorship">Mentorship</a><a href="../index.html#platform">Platform</a><a href="../index.html#lab">AI Lab</a><a href="../index.html#projects">Projects</a><a href="../index.html#contact">Contact</a></nav>
     </header>
     <main>
-      <section class="section case-hero"><div class="case-hero-copy reveal"><p class="eyebrow">Learning Project - Infrastructure Services</p><h1>Chron0s Raspberry Pi GPS Time Server</h1><p class="hero-lede">A placeholder page for documenting a GPS-backed time server build and the infrastructure value of accurate, local time services.</p><div class="hero-actions"><a class="button secondary" href="../index.html#projects">Back to Projects</a></div></div><div class="case-spec-panel reveal" aria-label="Project status"><div class="panel-topline"><span>Status</span><span class="status-dot">In Progress</span></div><ul><li><span>Focus</span><strong>Time services</strong></li><li><span>Hardware</span><strong>Raspberry Pi + GPS</strong></li><li><span>Output</span><strong>Build notes</strong></li></ul></div></section>
-      <section class="section"><div class="case-summary-grid"><article class="case-summary reveal"><span>Overview</span><p>This page will capture the Chron0s build, GPS time concepts, configuration notes, and testing evidence.</p></article><article class="case-summary reveal"><span>Why This Matters</span><p>Time sync is one of those quiet infrastructure services that only gets attention when it breaks. This project makes it visible and understandable.</p></article></div></section>
-      <section class="section"><div class="case-detail-grid"><article class="case-detail reveal"><span>Learning</span><h3>What I'm Learning</h3><p>NTP concepts, GPS time sources, hardware setup, service validation, and why time accuracy matters across systems.</p></article><article class="case-detail reveal"><span>Build</span><h3>What I Built / Am Building</h3><p>A Raspberry Pi GPS time server with notes that can become a practical walkthrough later.</p></article><article class="case-detail reveal"><span>Evidence</span><h3>Screenshots / Evidence</h3><p>Placeholder for hardware photos, configuration snippets, time sync validation, and diagrams.</p></article></div></section>
-      <section class="section"><div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Matt's Notes</p><h2>Small services teach big infrastructure lessons.</h2></div><div class="case-notes-copy"><p>A time server is a good reminder that infrastructure is not only big platforms. Sometimes the foundational pieces are quiet, specific, and deeply useful.</p></div></div><div class="case-next reveal"><div><p class="eyebrow">Next Steps</p><h2>Add hardware photos, validation output, and the build process.</h2></div><a class="button secondary" href="../index.html#projects">Back to Projects</a></div></section>
+      <section class="section case-hero">
+        <div class="case-hero-copy reveal">
+          <p class="eyebrow">Learning Project - Infrastructure Services</p>
+          <h1>Chron0s-01 GPS Time Server Rebuild</h1>
+          <p class="hero-lede">
+            A practical rebuild log for a Raspberry Pi 5 GPS/GNSS time server: what worked, what got weird, what was
+            validated, and what still needs another pass.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#validation">Validation Commands</a>
+            <a class="button secondary" href="../index.html#projects">Back to Projects</a>
+          </div>
+        </div>
+        <div class="case-spec-panel reveal" aria-label="Project status">
+          <div class="panel-topline">
+            <span>Status</span>
+            <span class="status-dot">Stable Base</span>
+          </div>
+          <ul>
+            <li><span>Focus</span><strong>Local NTP service</strong></li>
+            <li><span>Hardware</span><strong>Raspberry Pi 5 + GPS/GNSS</strong></li>
+            <li><span>Storage</span><strong>NVMe boot</strong></li>
+            <li><span>GPS</span><strong>u-blox M10 GR-U01</strong></li>
+            <li><span>Time Stack</span><strong>chrony, gpsd, pps-tools</strong></li>
+            <li><span>PPS</span><strong>Deferred</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section case-overview">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Project Goal</p>
+          <h2>Build a small, reliable GPS-backed time source for the homelab.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Goal</span>
+            <p>
+              Chron0s-01 is a Raspberry Pi 5 based GPS/GNSS time server intended to provide reliable local NTP service
+              for the homelab. The stack uses chrony, gpsd, gpsd-clients, and pps-tools.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Why It Matters</span>
+            <p>
+              Time sync is one of those quiet infrastructure services that usually only gets attention when it breaks.
+              This build makes the service visible, testable, and easier to trust.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Hardware Used</p>
+          <h2>The first job was getting a stable Pi 5 NVMe platform before worrying about time accuracy.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal"><h3>Raspberry Pi 5</h3><p>Base platform for the time server.</p></article>
+          <article class="case-value reveal"><h3>NVMe boot drive</h3><p>Boot storage for the Pi 5 build.</p></article>
+          <article class="case-value reveal"><h3>Pi 5 NVMe HAT/ribbon</h3><p>PCIe/NVMe connection stack used during the rebuild.</p></article>
+          <article class="case-value reveal"><h3>u-blox M10 GR-U01</h3><p>USB GPS/GNSS receiver used as the time source.</p></article>
+          <article class="case-value reveal"><h3>USB-C power</h3><p>USB-C power supply with a known-good USB-C cable.</p></article>
+          <article class="case-value reveal"><h3>Temporary WiFi</h3><p>WiFi was used during setup. Wired Ethernet is planned later.</p></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Build Notes and Troubleshooting</p>
+          <h2>The NVMe drive looked suspicious at first, but the evidence kept pointing back to power, cable, or Pi behavior.</h2>
+        </div>
+        <div class="case-investigation reveal">
+          <article>
+            <span>01</span>
+            <h3>Initial Symptoms</h3>
+            <p>Initial boot worked, but the first Pi showed EXT4 filesystem issues, input/output errors, and commands disappearing.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>NVMe Health</h3>
+            <p>The Lexar NM790 SMART report was clean: SMART passed, Critical Warning 0x0, Media and Data Integrity Errors 0, and Error Information Log Entries 0.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Ribbon Reseat</h3>
+            <p>Reseating the Pi 5 PCIe/NVMe ribbon helped temporarily, which kept the connector path in the suspect list.</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>Second Pi</h3>
+            <p>Moving the NVMe/HAT stack to a second Raspberry Pi 5 and switching to a known-good USB-C cable resulted in stable operation.</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h3>Working Theory</h3>
+            <p>Pi #1 had shown throttled=0x50000. Pi #2 showed throttled=0x0. The likely cause was power/cable instability or Pi #1 hardware behavior, not the NVMe drive.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="validation">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Useful Validation Commands</p>
+          <h2>These are the quick checks that separate a hunch from an actual build log.</h2>
+        </div>
+        <article class="case-detail case-implementation-note reveal">
+          <span>Command Set</span>
+          <h3>Platform, GPS, PPS, and chrony checks</h3>
+          <pre class="case-code-block"><code>vcgencmd get_throttled
+vcgencmd measure_temp
+mount | grep " / "
+dmesg | grep -i nvme
+dmesg | grep -iE "error|i/o|ext4"
+sudo smartctl -a /dev/nvme0
+chronyd -v
+gpsd -V
+cgps -s
+gpspipe -r | head
+gpspipe -w -n 20
+ls -l /dev/pps*
+sudo ppstest /dev/pps0
+chronyc sources -v
+chronyc tracking</code></pre>
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">GPS/GNSS Validation</p>
+          <h2>The GPS receiver came up cleanly and proved live satellite data near a window.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Device Path</span>
+            <h3>/dev/ttyUSB0</h3>
+            <p>The GR-U01 appeared as a USB serial device at /dev/ttyUSB0.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>USB Bridge</span>
+            <h3>Prolific PL2303</h3>
+            <p>The receiver presented through a Prolific PL2303 USB serial bridge.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Receiver</span>
+            <h3>u-blox M10</h3>
+            <p>gpsd detected the u-blox M10 receiver.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Fix</span>
+            <h3>3D FIX</h3>
+            <p>GPS achieved a 3D fix near a window. cgps showed satellite count, latitude/longitude, altitude, and 3D FIX.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Live Data</span>
+            <h3>NMEA and JSON</h3>
+            <p>gpspipe confirmed live NMEA/JSON output from gpsd.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">PPS Status</p>
+          <h2>GPS time works. PPS exists as a device, but the pulse is not validated yet.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Observed</span>
+            <p>
+              /dev/pps0 existed, and ppstest found the PPS source, but it timed out waiting for pulses. gpsd also
+              reported pps:false.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Current Decision</span>
+            <p>
+              Current status: GPS time works; PPS device exists but PPS pulse is not yet validated. PPS investigation
+              is deferred to a later phase.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">Current Status</p>
+            <h2>Chron0s-01 base platform is stable on the second Raspberry Pi 5.</h2>
+          </div>
+          <div class="case-notes-copy">
+            <p>
+              WiFi, SSH, NVMe boot, chrony, gpsd, GPS lock, and satellite monitoring are working. PPS remains
+              unresolved.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Next Steps</p>
+            <h2>Keep the base stable, wire it in properly, and come back to PPS with fresh eyes.</h2>
+          </div>
+          <ul class="case-roadmap" aria-label="Chron0s-01 next steps">
+            <li>Run cgps -s for several hours</li>
+            <li>Check vcgencmd get_throttled</li>
+            <li>Configure chrony for gpsd time</li>
+            <li>Revisit PPS troubleshooting</li>
+            <li>Move to wired Ethernet/static IP</li>
+            <li>Replace 1TB NM790 with 128GB NVMe</li>
+          </ul>
+        </div>
+      </section>
     </main>
     <footer class="site-footer"><span>Matt Smalling</span><span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span></footer>
     <script src="../src/main.js"></script>

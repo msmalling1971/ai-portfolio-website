@@ -609,3 +609,152 @@ Next Steps
 - Revisit PPS troubleshooting later.
 - Move to wired Ethernet/static IP when convenient.
 - Replace the oversized 1TB NM790 with the incoming 128GB NVMe for a permanent low-maintenance build.
+
+=========================================================
+Chron0s Phase 2 – Enterprise Time Architecture
+=========================================================
+
+Overview
+---------------------------------------------------------
+
+Chron0s evolved from a standalone Raspberry Pi GPS clock into the authoritative upstream source for a full infrastructure time hierarchy.
+
+The goal was not simply to build a Raspberry Pi GPS clock. The goal was to create a reliable, enterprise-style time architecture for the homelab where accurate time could be distributed consistently across identity, virtualization, firewall, backup, storage, AI, and security monitoring systems.
+
+Chron0s provides the GPS-backed source of truth. Meinberg provides the enterprise distribution layer. Active Directory keeps using its native hierarchy instead of every Windows system bypassing the domain model. Infrastructure systems consume time from Meinberg instead of reaching directly to the Raspberry Pi.
+
+Final Architecture
+---------------------------------------------------------
+
+```text
+GPS Satellites
+      |
+      v
+Chron0s-01
+192.168.50.245
+(Raspberry Pi 5 + GPS/GNSS)
+      |
+      v
+mein01
+192.168.50.5
+(Meinberg NTP Distribution Layer)
+      |
+      +--> DC1 (PDC Emulator) - 192.168.50.3
+      +--> DC2 - 192.168.50.4
+      +--> OPNsense Firewall
+      +--> prox1 - Proxmox Cluster Node
+      +--> prox2 - Proxmox Cluster Node
+      +--> ark-core - AI Infrastructure Host
+      +--> pbs-01 - Proxmox Backup Server
+      +--> TrueNAS SCALE
+      +--> Security Onion
+```
+
+Screenshot placeholders:
+- Chron0s chronyc sources/tracking output
+- Meinberg peer selection showing Chron0s reachability
+- Windows PDC Emulator time source validation
+- Infrastructure client NTP validation
+- Security Onion chronyd observation output
+
+Design Philosophy
+---------------------------------------------------------
+
+- Chron0s provides accurate GPS-backed time.
+- Meinberg provides enterprise time distribution.
+- Active Directory continues to use its native hierarchy.
+- Infrastructure systems consume time from Meinberg instead of directly from the Raspberry Pi.
+
+This allows:
+- GPS accuracy
+- Centralized distribution
+- Internet fallback
+- Reduced dependency on the Raspberry Pi
+- Easier troubleshooting
+
+Validation Results
+---------------------------------------------------------
+
+Chron0s:
+- GPS lock maintained
+- 3D FIX confirmed
+- Satellites tracked continuously
+- chronyd synchronized
+- NTP service enabled
+- vcgencmd get_throttled = 0x0
+- Stable for more than 24 hours
+
+Meinberg:
+- Successfully consuming Chron0s
+- Reachability reached 377
+- Chron0s participating in peer selection
+
+Infrastructure systems successfully integrated:
+- DC1
+- DC2
+- OPNsense
+- prox1
+- prox2
+- ark-core AI Host
+- PBS
+- TrueNAS
+
+Security Onion:
+- Successfully communicated with Meinberg
+- Chronyd detected Meinberg
+- Initially classified Meinberg as a falseticker due to disagreement with long-established public pool sources
+- Connectivity and NTP communication verified
+- Left in observation mode
+
+Before and After
+---------------------------------------------------------
+
+| Before | After |
+| --- | --- |
+| Public NTP sources | GPS-backed authoritative source |
+| Inconsistent infrastructure configuration | Centralized Meinberg distribution |
+| Legacy and unknown NTP references | Consistent infrastructure synchronization |
+| No GPS-backed source | Enterprise-style time hierarchy |
+| Limited architecture evidence | Documented and validated architecture |
+
+Matt's Notes
+---------------------------------------------------------
+
+What surprised me:
+- The GPS receiver was easier than the platform stability issues.
+- Most effort went into power, storage, and NTP architecture rather than GPS itself.
+- Enterprise time distribution turned out to be more important than the GPS hardware.
+
+What broke:
+- EXT4 filesystem corruption on the original Pi.
+- Input/output errors.
+- Historical undervoltage events.
+- Security Onion initially rejecting Meinberg as a falseticker.
+
+What I learned:
+- Accurate time is infrastructure.
+- GPS is only one piece of the solution.
+- A distribution layer (Meinberg) simplifies everything.
+- Observability and validation are critical.
+- Time synchronization affects security, virtualization, logging, backups, and troubleshooting.
+
+What I would do differently:
+- Validate power delivery before building services.
+- Check vcgencmd get_throttled immediately.
+- Build the time hierarchy first instead of treating Chron0s as an isolated project.
+- Document architecture decisions as they are made.
+
+Project Status
+---------------------------------------------------------
+
+Status: Chron0s Phase 2 Complete
+
+Current State: Operational
+
+Future Enhancements:
+- Chron0s-02 secondary GPS source
+- PPS validation and optimization
+- Prometheus/Grafana monitoring for Chron0s
+- NTP drift dashboards
+- Infrastructure-wide time monitoring
+- Automatic alerting on Chron0s failures

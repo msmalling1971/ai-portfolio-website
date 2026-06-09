@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Build log for the Chron0s-01 Raspberry Pi 5 GPS/GNSS time server rebuild, including NVMe troubleshooting, GPS validation, and PPS status." />
-    <title>Chron0s Raspberry Pi GPS Time Server | Matt Smalling</title>
+    <meta name="description" content="Chron0s Phase 2 enterprise time architecture: GPS-backed Raspberry Pi time source, Meinberg distribution, Active Directory hierarchy, and infrastructure NTP validation." />
+    <title>Chron0s Phase 2 Enterprise Time Architecture | Matt Smalling</title>
     <link rel="stylesheet" href="../src/styles.css" />
   </head>
   <body>
@@ -18,10 +18,10 @@
       <section class="section case-hero">
         <div class="case-hero-copy reveal">
           <p class="eyebrow">Learning Project - Infrastructure Services</p>
-          <h1>Chron0s-01 GPS Time Server Rebuild</h1>
+          <h1>Chron0s Phase 2 - Enterprise Time Architecture</h1>
           <p class="hero-lede">
-            A practical rebuild log for a Raspberry Pi 5 GPS/GNSS time server: what worked, what got weird, what was
-            validated, and what still needs another pass.
+            The build evolved from a Raspberry Pi GPS/GNSS clock into an enterprise-style time hierarchy for identity,
+            virtualization, firewall, backup, storage, AI infrastructure, and security monitoring systems.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#validation">Validation Commands</a>
@@ -31,15 +31,15 @@
         <div class="case-spec-panel reveal" aria-label="Project status">
           <div class="panel-topline">
             <span>Status</span>
-            <span class="status-dot">Stable Base</span>
+            <span class="status-dot">Operational</span>
           </div>
           <ul>
-            <li><span>Focus</span><strong>Local NTP service</strong></li>
+            <li><span>Focus</span><strong>Enterprise time architecture</strong></li>
             <li><span>Hardware</span><strong>Raspberry Pi 5 + GPS/GNSS</strong></li>
+            <li><span>Upstream</span><strong>Chron0s-01 / 192.168.50.245</strong></li>
+            <li><span>Distribution</span><strong>mein01 / 192.168.50.5</strong></li>
             <li><span>Storage</span><strong>NVMe boot</strong></li>
-            <li><span>GPS</span><strong>u-blox M10 GR-U01</strong></li>
-            <li><span>Time Stack</span><strong>chrony, gpsd, pps-tools</strong></li>
-            <li><span>PPS</span><strong>Deferred</strong></li>
+            <li><span>Status</span><strong>Chron0s Phase 2 Complete</strong></li>
           </ul>
         </div>
       </section>
@@ -53,16 +53,195 @@
           <article class="case-summary reveal">
             <span>Goal</span>
             <p>
-              Chron0s-01 is a Raspberry Pi 5 based GPS/GNSS time server intended to provide reliable local NTP service
-              for the homelab. The stack uses chrony, gpsd, gpsd-clients, and pps-tools.
+              Chron0s-01 started as a Raspberry Pi 5 based GPS/GNSS time server, but the project goal became larger:
+              build a reliable infrastructure time hierarchy for the homelab.
             </p>
           </article>
           <article class="case-summary reveal">
             <span>Why It Matters</span>
             <p>
               Time sync is one of those quiet infrastructure services that usually only gets attention when it breaks.
-              This build makes the service visible, testable, and easier to trust.
+              Phase 2 makes it visible, testable, centrally distributed, and easier to trust.
             </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Final Architecture</p>
+          <h2>Chron0s-01 is the GPS-backed source of truth; Meinberg is the enterprise distribution layer.</h2>
+          <p>
+            The goal was not simply to build a Raspberry Pi GPS clock. Chron0s Phase 2 turns that clock into an
+            infrastructure time hierarchy where core systems consume time from Meinberg instead of depending directly
+            on the Raspberry Pi.
+          </p>
+        </div>
+
+        <div class="case-flow-panel reveal">
+          <div class="case-flow">
+            <span>Authoritative Time Path</span>
+            <ol>
+              <li>GPS Satellites</li>
+              <li>Chron0s-01 - 192.168.50.245 - Raspberry Pi 5 + GPS/GNSS</li>
+              <li>mein01 - 192.168.50.5 - Meinberg NTP Distribution Layer</li>
+              <li>DC1 - 192.168.50.3 - PDC Emulator</li>
+              <li>DC2 - 192.168.50.4</li>
+              <li>Infrastructure clients</li>
+            </ol>
+          </div>
+          <div class="case-layer-map">
+            <article>
+              <span>GPS Source</span>
+              <strong>Chron0s provides accurate GPS-backed time from the Raspberry Pi 5 and GNSS receiver.</strong>
+            </article>
+            <article>
+              <span>Distribution Layer</span>
+              <strong>Meinberg centralizes NTP distribution, participates in peer selection, and keeps Internet fallback available.</strong>
+            </article>
+            <article>
+              <span>Active Directory</span>
+              <strong>DC1, the PDC Emulator, syncs from Meinberg while Active Directory continues to use its native hierarchy.</strong>
+            </article>
+            <article>
+              <span>Infrastructure</span>
+              <strong>OPNsense, prox1, prox2, ark-core, pbs-01, TrueNAS SCALE, and Security Onion consume time through the distribution layer.</strong>
+            </article>
+          </div>
+        </div>
+
+        <div class="case-architecture reveal">
+          <div class="case-layer-map">
+            <article><span>Upstream</span><strong>GPS Satellites -> Chron0s-01 / 192.168.50.245</strong></article>
+            <article><span>Distribution</span><strong>Chron0s-01 -> mein01 / 192.168.50.5</strong></article>
+            <article><span>Identity</span><strong>mein01 -> DC1 PDC Emulator / 192.168.50.3 -> DC2 / 192.168.50.4</strong></article>
+            <article><span>Network</span><strong>mein01 -> OPNsense Firewall</strong></article>
+            <article><span>Virtualization</span><strong>mein01 -> prox1 and prox2 Proxmox cluster nodes</strong></article>
+            <article><span>AI Platform</span><strong>mein01 -> ark-core AI Infrastructure Host</strong></article>
+            <article><span>Backup and Storage</span><strong>mein01 -> pbs-01 and TrueNAS SCALE</strong></article>
+            <article><span>Security</span><strong>mein01 -> Security Onion, left in observation mode after communication was verified</strong></article>
+          </div>
+          <div class="case-diagram-slot" aria-label="Placeholder for Chron0s Phase 2 draw.io architecture diagram">
+            <span>Future Draw.io Diagram</span>
+            <strong>GPS satellites -> Chron0s-01 -> mein01 -> Active Directory, firewall, Proxmox, AI host, backup, storage, and Security Onion</strong>
+          </div>
+        </div>
+
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">Design Philosophy</p>
+            <h2>GPS accuracy belongs upstream; stable distribution belongs in the enterprise layer.</h2>
+          </div>
+          <div class="case-notes-copy">
+            <ul>
+              <li>Chron0s provides accurate GPS-backed time.</li>
+              <li>Meinberg provides enterprise time distribution.</li>
+              <li>Active Directory continues to use its native hierarchy.</li>
+              <li>Infrastructure systems consume time from Meinberg instead of directly from the Raspberry Pi.</li>
+              <li>The design preserves GPS accuracy, centralized distribution, Internet fallback, reduced Raspberry Pi dependency, and easier troubleshooting.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="case-table-panel reveal model-comparison-panel">
+          <table class="case-benchmark-table model-comparison-table">
+            <caption class="benchmark-table-caption">Before and after the Phase 2 time architecture work.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Before</th>
+                <th scope="col">After</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Public NTP sources</td>
+                <td>GPS-backed authoritative source</td>
+              </tr>
+              <tr>
+                <td>Inconsistent infrastructure configuration</td>
+                <td>Centralized Meinberg distribution</td>
+              </tr>
+              <tr>
+                <td>Legacy and unknown NTP references</td>
+                <td>Consistent infrastructure synchronization</td>
+              </tr>
+              <tr>
+                <td>No GPS-backed source</td>
+                <td>Enterprise-style time hierarchy</td>
+              </tr>
+              <tr>
+                <td>Limited architecture evidence</td>
+                <td>Documented and validated architecture</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="case-screenshot-placeholders reveal">
+          <figure class="case-screenshot-card">
+            <div class="case-diagram-slot compact" aria-label="Placeholder for Chron0s chronyc screenshot">
+              <span>Screenshot Placeholder</span>
+              <strong>Chron0s chronyc sources and tracking output</strong>
+            </div>
+            <figcaption>Placeholder - Chron0s chronyc sources and tracking</figcaption>
+          </figure>
+          <figure class="case-screenshot-card">
+            <div class="case-diagram-slot compact" aria-label="Placeholder for Meinberg peer selection screenshot">
+              <span>Screenshot Placeholder</span>
+              <strong>Meinberg peer selection with Chron0s reachability at 377</strong>
+            </div>
+            <figcaption>Placeholder - Meinberg peer selection and reachability 377</figcaption>
+          </figure>
+          <figure class="case-screenshot-card">
+            <div class="case-diagram-slot compact" aria-label="Placeholder for Security Onion chronyd screenshot">
+              <span>Screenshot Placeholder</span>
+              <strong>Security Onion chronyd observation mode output</strong>
+            </div>
+            <figcaption>Placeholder - Security Onion chronyd observation output</figcaption>
+          </figure>
+        </div>
+
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Future Enhancements</p>
+            <h2>Keep the time layer boring, redundant, and observable after Phase 2.</h2>
+          </div>
+          <ul class="case-roadmap" aria-label="Homelab time architecture future expansion">
+            <li>Chron0s-02 secondary GPS source</li>
+            <li>PPS validation and optimization</li>
+            <li>Prometheus/Grafana monitoring for Chron0s</li>
+            <li>NTP drift dashboards</li>
+            <li>Infrastructure-wide time monitoring</li>
+            <li>Automatic alerting on Chron0s failures</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Validation Results</p>
+          <h2>Phase 2 was accepted only after GPS, distribution, client integration, and Security Onion communication were checked.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Chron0s</span>
+            <h3>GPS-backed source stable</h3>
+            <p>GPS lock maintained, 3D FIX confirmed, satellites tracked continuously, chronyd synchronized, NTP service enabled, vcgencmd get_throttled = 0x0, and the platform remained stable for more than 24 hours.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Meinberg</span>
+            <h3>Distribution layer validated</h3>
+            <p>mein01 successfully consumed Chron0s, reachability reached 377, and Chron0s participated in peer selection.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Integrated Systems</span>
+            <h3>Core infrastructure moved to Meinberg</h3>
+            <p>DC1, DC2, OPNsense, prox1, prox2, ark-core AI Host, PBS, and TrueNAS were successfully integrated.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Security Onion</span>
+            <h3>Communication verified, observation continues</h3>
+            <p>Security Onion communicated with Meinberg and chronyd detected it, but initially classified Meinberg as a falseticker due to disagreement with long-established public pool sources. Connectivity and NTP communication were verified, then left in observation mode.</p>
           </article>
         </div>
       </section>
@@ -203,33 +382,36 @@ chronyc tracking</code></pre>
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
             <p class="eyebrow">Matt's Notes</p>
-            <h2>The GPS receiver behaved better than the platform underneath it.</h2>
+            <h2>Enterprise time distribution turned out to matter more than the GPS hardware by itself.</h2>
           </div>
           <div class="case-notes-copy">
             <h3>What surprised me</h3>
             <ul>
-              <li>The GPS side was easier than the platform stability problem.</li>
-              <li>The GR-U01 got a 3D GPS fix indoors near a window.</li>
-              <li>The NVMe SMART data was clean even while the first Pi showed filesystem and I/O issues.</li>
+              <li>The GPS receiver was easier than the platform stability issues.</li>
+              <li>Most effort went into power, storage, and NTP architecture rather than GPS itself.</li>
+              <li>Enterprise time distribution turned out to be more important than the GPS hardware.</li>
             </ul>
             <h3>What broke</h3>
             <ul>
-              <li>The first Raspberry Pi showed EXT4 issues, input/output errors, and disappearing commands.</li>
-              <li>Historical undervoltage/throttling showed as throttled=0x50000.</li>
-              <li>PPS appeared as /dev/pps0, but ppstest timed out waiting for pulses.</li>
+              <li>EXT4 filesystem corruption on the original Pi.</li>
+              <li>Input/output errors.</li>
+              <li>Historical undervoltage events.</li>
+              <li>Security Onion initially rejected Meinberg as a falseticker.</li>
             </ul>
             <h3>What I learned</h3>
             <ul>
-              <li>A clean SSD SMART report does not rule out cable, power, or board-level instability.</li>
-              <li>On Raspberry Pi 5, NVMe boot depends heavily on stable power, cable quality, and PCIe ribbon seating.</li>
-              <li>GPSD can work fine even when PPS still needs more investigation.</li>
+              <li>Accurate time is infrastructure.</li>
+              <li>GPS is only one piece of the solution.</li>
+              <li>A distribution layer like Meinberg simplifies everything.</li>
+              <li>Observability and validation are critical.</li>
+              <li>Time synchronization affects security, virtualization, logging, backups, and troubleshooting.</li>
             </ul>
             <h3>What I would do differently</h3>
             <ul>
-              <li>Start with a known-good USB-C cable.</li>
-              <li>Check vcgencmd get_throttled early.</li>
-              <li>Validate storage stability before installing the full GPS/NTP stack.</li>
-              <li>Use a smaller dedicated NVMe for the final build.</li>
+              <li>Validate power delivery before building services.</li>
+              <li>Check vcgencmd get_throttled immediately.</li>
+              <li>Build the time hierarchy first instead of treating Chron0s as an isolated project.</li>
+              <li>Document architecture decisions as they are made.</li>
             </ul>
           </div>
         </div>
@@ -239,12 +421,13 @@ chronyc tracking</code></pre>
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
             <p class="eyebrow">Current Status</p>
-            <h2>Chron0s-01 base platform is stable on the second Raspberry Pi 5.</h2>
+            <h2>Chron0s Phase 2 is complete and operational.</h2>
           </div>
           <div class="case-notes-copy">
             <p>
-              WiFi, SSH, NVMe boot, chrony, gpsd, GPS lock, and satellite monitoring are working. PPS remains
-              unresolved.
+              Chron0s-01 is stable as the GPS-backed upstream source, mein01 is distributing time, Active Directory
+              keeps its native hierarchy, and the core infrastructure systems have been validated against the new
+              enterprise-style time architecture.
             </p>
           </div>
         </div>
@@ -253,16 +436,16 @@ chronyc tracking</code></pre>
       <section class="section">
         <div class="case-next reveal">
           <div>
-            <p class="eyebrow">Next Steps</p>
-            <h2>Keep the base stable, wire it in properly, and come back to PPS with fresh eyes.</h2>
+            <p class="eyebrow">Future Enhancements</p>
+            <h2>Add redundancy, telemetry, drift visibility, and alerting around the completed Phase 2 architecture.</h2>
           </div>
           <ul class="case-roadmap" aria-label="Chron0s-01 next steps">
-            <li>Run cgps -s for several hours</li>
-            <li>Check vcgencmd get_throttled</li>
-            <li>Configure chrony for gpsd time</li>
-            <li>Revisit PPS troubleshooting</li>
-            <li>Move to wired Ethernet/static IP</li>
-            <li>Replace 1TB NM790 with 128GB NVMe</li>
+            <li>Chron0s-02 secondary GPS source</li>
+            <li>PPS validation and optimization</li>
+            <li>Prometheus/Grafana monitoring for Chron0s</li>
+            <li>NTP drift dashboards</li>
+            <li>Infrastructure-wide time monitoring</li>
+            <li>Automatic alerting on Chron0s failures</li>
           </ul>
         </div>
       </section>

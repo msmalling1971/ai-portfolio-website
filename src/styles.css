@@ -846,6 +846,10 @@ h3 {
   background: rgba(29, 35, 43, 0.48);
 }
 
+.novalab-business-grid {
+  margin-bottom: 18px;
+}
+
 .career-track {
   position: relative;
   display: grid;

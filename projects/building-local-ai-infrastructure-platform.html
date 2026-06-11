@@ -94,6 +94,55 @@
         </div>
       </section>
 
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Executive Context</p>
+          <h2>The business value was creating a trustworthy platform state, not just getting a model to answer.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Business Problem</span>
+            <h3>Platform confidence had dropped</h3>
+            <p>
+              GPU driver conflicts, runtime failures, and accumulated troubleshooting changes made the AI platform hard
+              to trust as a baseline for future work.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Decision Made</span>
+            <h3>Rebuild from a clean baseline</h3>
+            <p>
+              Rebuild on Proxmox, resolve GPU ownership issues, validate NVIDIA/CUDA/Open WebUI/Ollama/model execution,
+              then protect the working state.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Outcome</span>
+            <h3>Recoverable AI platform baseline</h3>
+            <p>
+              Established a validated local AI platform with RTX 3090 acceleration, model execution, documentation,
+              snapshots, and NAS backup.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk Reduced</span>
+            <h3>Less drift and recovery uncertainty</h3>
+            <p>
+              Reduced platform drift, GPU/runtime troubleshooting risk, and uncertainty around whether the environment
+              could be restored or repeated.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Operating Improvement</span>
+            <h3>From demo to managed infrastructure</h3>
+            <p>
+              Added root cause analysis, validation steps, documentation, snapshots, backups, benchmarking, and
+              observability work around the AI platform.
+            </p>
+          </article>
+        </div>
+      </section>
+
       <section class="section" id="architecture">
         <div class="section-heading reveal">
           <p class="eyebrow">Architecture Overview</p>

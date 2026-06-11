@@ -47,7 +47,7 @@
       <section class="section case-overview">
         <div class="section-heading reveal">
           <p class="eyebrow">Project Goal</p>
-          <h2>Build a small, reliable GPS-backed time source for the homelab.</h2>
+          <h2>Build a reliable time layer that supports identity, logging, backups, and security monitoring.</h2>
         </div>
         <div class="case-summary-grid">
           <article class="case-summary reveal">
@@ -62,6 +62,55 @@
             <p>
               Time sync is one of those quiet infrastructure services that usually only gets attention when it breaks.
               Phase 2 makes it visible, testable, centrally distributed, and easier to trust.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Executive Context</p>
+          <h2>Time synchronization is quiet infrastructure until identity, audit trails, or incident response need it.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Business Problem</span>
+            <h3>Time needed a trusted hierarchy</h3>
+            <p>
+              Inconsistent or legacy NTP references create risk for identity, logging, backups, security monitoring,
+              auditability, and troubleshooting.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Decision Made</span>
+            <h3>Centralize enterprise distribution</h3>
+            <p>
+              Evolve Chron0s from a Raspberry Pi GPS/GNSS clock into a time hierarchy using Meinberg distribution and
+              Active Directory alignment.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Outcome</span>
+            <h3>Core systems integrated</h3>
+            <p>
+              Established Chron0s as the GPS-backed source, Meinberg as the distribution layer, and validated core
+              infrastructure clients.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk Reduced</span>
+            <h3>Better timestamp trust</h3>
+            <p>
+              Reduced risk from inconsistent time sources, weak log correlation, unclear NTP dependencies, and fragile
+              timestamp assumptions.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Operating Improvement</span>
+            <h3>Visible and testable time service</h3>
+            <p>
+              Improved infrastructure trust through centralized distribution, validation commands, client integration
+              checks, and planned redundancy and monitoring.
             </p>
           </article>
         </div>

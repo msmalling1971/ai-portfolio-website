@@ -155,7 +155,7 @@
           <li class="reveal"><span>03</span><strong>VFIO Investigation</strong></li>
           <li class="reveal"><span>04</span><strong>Ollama Runtime Failures</strong></li>
           <li class="reveal"><span>05</span><strong>Platform State Confidence Review</strong></li>
-          <li class="reveal"><span>06</span><strong>Decision To Rebuild</strong></li>
+          <li class="reveal"><span>06</span><strong>Decision to Rebuild</strong></li>
           <li class="reveal"><span>07</span><strong>Fresh Proxmox Deployment</strong></li>
           <li class="reveal"><span>08</span><strong>NovaCore Conflict Discovery</strong></li>
           <li class="reveal"><span>09</span><strong>NVIDIA 595.80 Installation</strong></li>
@@ -622,7 +622,7 @@ WantedBy=timers.target</code></pre>
           <h2>Qwen3-14B-AWQ vLLM Evaluation</h2>
           <p>
             This test evaluated whether Qwen3-14B-AWQ could run reliably on a single RTX 3090 24GB using vLLM,
-            OpenWebUI, Prometheus, Grafana, and GPU telemetry.
+            Open WebUI, Prometheus, Grafana, and GPU telemetry.
           </p>
         </div>
 
@@ -637,7 +637,7 @@ WantedBy=timers.target</code></pre>
           <article class="case-summary reveal">
             <span>Current Status</span>
             <p>
-              Qwen3-14B-AWQ is successfully running under vLLM on the RTX 3090. OpenWebUI can connect to it, API
+              Qwen3-14B-AWQ is successfully running under vLLM on the RTX 3090. Open WebUI can connect to it, API
               testing works, and Grafana captures GPU/runtime telemetry.
             </p>
           </article>
@@ -655,7 +655,7 @@ WantedBy=timers.target</code></pre>
 GPU had ~23.55 GiB total capacity
 Only a small amount of VRAM was free</code></pre>
             <p>
-              That confirmed full precision / larger model loading was not practical on a single 24GB card without
+              That confirmed full-precision or larger model loading was not practical on a single 24GB card without
               quantization or model parallelism.
             </p>
           </article>
@@ -690,11 +690,11 @@ Only a small amount of VRAM was free</code></pre>
               <li><span>Model</span><strong>Qwen/Qwen3-14B-AWQ</strong></li>
               <li><span>Runtime</span><strong>vLLM 0.22.0</strong></li>
               <li><span>API</span><strong>OpenAI-compatible :8000</strong></li>
-              <li><span>Frontend</span><strong>OpenWebUI</strong></li>
+              <li><span>Frontend</span><strong>Open WebUI</strong></li>
               <li><span>GPU</span><strong>RTX 3090 24GB</strong></li>
             </ul>
             <p>
-              vLLM served /v1/models and /v1/chat/completions successfully. OpenWebUI displayed and used the
+              vLLM served /v1/models and /v1/chat/completions successfully. Open WebUI displayed and used the
               Qwen3-14B-AWQ model successfully.
             </p>
           </article>
@@ -762,13 +762,13 @@ curl http://localhost:8000/v1/chat/completions \
 
         <div class="section-heading benchmark-subheading reveal">
           <p class="eyebrow">Architecture Diagram</p>
-          <h2>OpenWebUI talks to vLLM, vLLM runs the AWQ model, and Prometheus/Grafana watch the runtime.</h2>
+          <h2>Open WebUI talks to vLLM, vLLM runs the AWQ model, and Prometheus/Grafana watch the runtime.</h2>
         </div>
         <div class="case-flow-panel reveal">
           <div class="case-flow">
             <span>Request Path</span>
             <ol>
-              <li>OpenWebUI</li>
+              <li>Open WebUI</li>
               <li>vLLM OpenAI-compatible API :8000</li>
               <li>Qwen3-14B-AWQ</li>
               <li>RTX 3090 24GB</li>
@@ -797,7 +797,7 @@ curl http://localhost:8000/v1/chat/completions \
               <article class="case-detail reveal">
                 <span>TODO Image</span>
                 <h3>qwen3-14b-awq-openwebui.png</h3>
-                <p>OpenWebUI showing the Qwen3-14B-AWQ model connected through the vLLM endpoint.</p>
+                <p>Open WebUI showing the Qwen3-14B-AWQ model connected through the vLLM endpoint.</p>
               </article>
               <!-- TODO: Add screenshot at ../images/project-screenshots/ai-infrastructure-platform/qwen3-14b-awq-nvidia-smi.png -->
               <article class="case-detail reveal">
@@ -851,7 +851,7 @@ curl http://localhost:8000/v1/chat/completions \
         <div class="case-notes-callout reveal">
           <div class="case-notes-heading">
             <p class="eyebrow">Matt's Notes</p>
-            <h2>Quantization was the difference between almost fits and actually runs.</h2>
+            <h2>Quantization was the difference between "almost fits" and "actually runs."</h2>
           </div>
           <div class="case-notes-copy">
             <h3>What surprised me</h3>
@@ -889,7 +889,7 @@ curl http://localhost:8000/v1/chat/completions \
           </div>
           <div class="case-notes-copy">
             <p>
-              OpenWebUI can connect to it, API testing works, and Grafana captures GPU/runtime telemetry. The
+              Open WebUI can connect to it, API testing works, and Grafana captures GPU/runtime telemetry. The
               non-quantized 14B model failed with CUDA OOM, making AWQ quantization the practical path for this GPU.
             </p>
           </div>
@@ -931,7 +931,7 @@ curl http://localhost:8000/v1/chat/completions \
             <p>Snapshots and NAS backups converted a working state into a recoverable platform baseline.</p>
           </article>
           <article class="case-value reveal">
-            <h3>AI Infrastructure is still Infrastructure.</h3>
+            <h3>AI infrastructure is still infrastructure.</h3>
             <p>Architecture, reliability, security, monitoring, recovery, and documentation remain core operating concerns.</p>
           </article>
         </div>

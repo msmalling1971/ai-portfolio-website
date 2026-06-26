@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="NovaLab AI Runtime Platform case study: a controlled AI runtime platform for model serving, GPU infrastructure, observability, benchmarking, recovery, and operational decision-making."
+    />
+    <title>NovaLab AI Runtime Platform | Matt Smalling</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+  </head>
+  <body>
+    <div class="site-grid" aria-hidden="true"></div>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html#home" aria-label="Matt Smalling home">
+        <span class="brand-mark">MS</span>
+        <span>
+          <strong>Matt Smalling</strong>
+          <small>Infrastructure Modernization</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Open navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" data-nav>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#leadership">Leadership</a>
+        <a href="../index.html#philosophy">Modernization</a>
+        <a href="../index.html#novalab-status">NovaLab</a>
+        <a href="../index.html#learning">Learning</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section case-hero">
+        <div class="case-hero-copy reveal">
+          <p class="eyebrow">Flagship Case Study - AI Infrastructure</p>
+          <h1>NovaLab AI Runtime Platform</h1>
+          <p class="hero-lede">
+            NovaLab is not an AI demo. It is a controlled AI runtime platform built to understand how model serving,
+            GPU infrastructure, observability, benchmarking, recovery, and operational decision-making fit together.
+          </p>
+          <p class="hero-lede">
+            The work is intentionally practical: build the platform, validate the runtime path, observe the system under
+            load, protect the working state, and document the decisions that make the environment easier to trust.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#current-state">Current State</a>
+            <a class="button secondary" href="../index.html#projects">Back to Projects</a>
+          </div>
+        </div>
+
+        <div class="case-spec-panel reveal" aria-label="NovaLab validated platform baseline">
+          <div class="panel-topline">
+            <span>Platform Status</span>
+            <span class="status-dot">Active / Validated Baseline</span>
+          </div>
+          <ul>
+            <li><span>Runtime</span><strong>vLLM</strong></li>
+            <li><span>API</span><strong>OpenAI-compatible endpoint</strong></li>
+            <li><span>Model Baseline</span><strong>Qwen2.5-7B-Instruct</strong></li>
+            <li><span>GPU</span><strong>RTX 3090 24GB</strong></li>
+            <li><span>Observability</span><strong>Prometheus + Grafana</strong></li>
+            <li><span>Load Testing</span><strong>Locust</strong></li>
+            <li><span>Recovery</span><strong>Snapshots and NAS backup</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Business Context</p>
+          <h2>AI experiments become risky when they are not treated like infrastructure.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Risk</span>
+            <h3>Unclear ownership</h3>
+            <p>Model runtimes, interfaces, GPUs, and data paths need clear ownership before they become trusted capability.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk</span>
+            <h3>Lack of observability</h3>
+            <p>A model can return answers while the platform is near a bottleneck. Metrics make that visible.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk</span>
+            <h3>Unclear recovery path</h3>
+            <p>A useful AI platform needs a known-good state that can be protected, restored, and explained.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk</span>
+            <h3>Cost uncertainty</h3>
+            <p>Local testing helps expose compute, runtime, and scaling tradeoffs before larger cloud spend is committed.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk</span>
+            <h3>Privacy and IP concerns</h3>
+            <p>Placement decisions matter when prompts, data, models, or outputs may involve sensitive work.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Risk</span>
+            <h3>Weak operating standards</h3>
+            <p>NovaLab creates a controlled place to learn the baseline before broader adoption decisions are made.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Platform Goals</p>
+          <h2>The goal is a working operating model for local AI infrastructure, not a one-time model launch.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal">
+            <h3>Build a local AI runtime platform</h3>
+            <p>Create a controlled environment for model serving and infrastructure learning.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Serve models through an OpenAI-compatible API</h3>
+            <p>Expose a runtime path that can connect cleanly to application clients like Open WebUI.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Validate GPU-backed inference</h3>
+            <p>Confirm that the runtime, model, driver, CUDA, and RTX 3090 path work together.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Add observability</h3>
+            <p>Use Prometheus and Grafana to make runtime, host, and GPU behavior visible.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Run load testing</h3>
+            <p>Use Locust to test the API path under controlled user counts.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Establish a recoverable baseline</h3>
+            <p>Protect validated platform states with snapshots, backup, and documentation.</p>
+          </article>
+          <article class="case-value reveal">
+            <h3>Document operational lessons</h3>
+            <p>Turn implementation work into decisions, notes, and patterns that future builds can reuse.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Constraints</p>
+          <h2>The platform is intentionally cost-aware and bounded by real local hardware limits.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Hardware Boundaries</span>
+            <p>
+              NovaLab runs on local lab hardware with a single RTX 3090 24GB. That makes GPU memory, power, thermal
+              behavior, and consumer hardware limits part of the engineering problem.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Model Boundaries</span>
+            <p>
+              Model sizing, context length, precision, and quantization matter. The full Qwen3-14B test exposed the
+              practical VRAM limit, while the Qwen3-14B-AWQ test showed why model format matters.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Cost Boundaries</span>
+            <p>
+              The lab is designed to avoid unnecessary cloud spend while learning the runtime, observability, and
+              capacity patterns that should inform future placement decisions.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="current-state">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Current State Dashboard</p>
+          <h2>A concise view of the active validated baseline.</h2>
+        </div>
+        <div class="case-outcome-dashboard reveal" aria-label="NovaLab current state dashboard">
+          <article><span>Runtime</span><strong>vLLM</strong></article>
+          <article><span>API</span><strong>OpenAI-compatible endpoint</strong></article>
+          <article><span>Model Baseline</span><strong>Qwen2.5-7B-Instruct</strong></article>
+          <article><span>GPU</span><strong>RTX 3090 24GB</strong></article>
+          <article><span>Observability</span><strong>Prometheus + Grafana</strong></article>
+          <article><span>Load Testing</span><strong>Locust</strong></article>
+          <article><span>Status</span><strong>Active / validated baseline</strong></article>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Architecture Overview</p>
+          <h2>NovaLab separates the user experience, runtime API, GPU execution, observability, load testing, and recovery baseline into clear operating layers.</h2>
+        </div>
+        <div class="case-architecture reveal">
+          <div class="case-layer-map">
+            <article><span>User Interface</span><strong>Open WebUI provides the user-facing workflow for model interaction.</strong></article>
+            <article><span>Runtime / API</span><strong>vLLM exposes an OpenAI-compatible API that applications can call.</strong></article>
+            <article><span>Model Baseline</span><strong>Qwen2.5-7B-Instruct is the active baseline model for the validated runtime path.</strong></article>
+            <article><span>GPU Layer</span><strong>The RTX 3090 24GB provides local GPU-backed inference capacity.</strong></article>
+            <article><span>Observability</span><strong>Prometheus and Grafana make runtime, host, and GPU behavior visible.</strong></article>
+            <article><span>Load Testing</span><strong>Locust exercises the same API path used by application clients.</strong></article>
+            <article><span>Recovery Baseline</span><strong>Snapshots and NAS backup protect the validated platform state.</strong></article>
+          </div>
+          <div class="case-diagram-slot" aria-label="Planned NovaLab architecture diagram">
+            <span>Architecture Diagram Pending</span>
+            <strong>Show runtime flow, observability flow, GPU layer, benchmark path, and recovery boundary.</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Runtime Request Flow</p>
+          <h2>The request path validates the platform as a working service, not a set of isolated components.</h2>
+        </div>
+        <div class="case-flow-panel reveal">
+          <div class="case-flow">
+            <span>Request Path</span>
+            <ol>
+              <li>User</li>
+              <li>Open WebUI</li>
+              <li>OpenAI-compatible API</li>
+              <li>vLLM runtime</li>
+              <li>Model inference on RTX 3090</li>
+              <li>Response back to user</li>
+            </ol>
+          </div>
+          <div class="case-layer-map">
+            <article><span>Application Path</span><strong>Open WebUI uses the same API pattern future AI services can reuse.</strong></article>
+            <article><span>Runtime Path</span><strong>vLLM handles model serving behind a clear API boundary.</strong></article>
+            <article><span>GPU Path</span><strong>The RTX 3090 performs local inference for the active model baseline.</strong></article>
+            <article><span>Operating Value</span><strong>The full path is easier to observe, test, document, and repeat than a one-off model run.</strong></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Observability Flow</p>
+          <h2>NovaLab measures platform behavior from the runtime, host, GPU, and user-facing performance angles.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Runtime Metrics</span>
+            <h3>vLLM exposes metrics</h3>
+            <p>The runtime exposes signals that help explain throughput, latency, running requests, waiting requests, and cache pressure.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Host Metrics</span>
+            <h3>Node Exporter exposes host state</h3>
+            <p>Host and container metrics help separate runtime behavior from monitoring or system resource issues.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>GPU Metrics</span>
+            <h3>GPU telemetry is collected separately</h3>
+            <p>GPU utilization, temperature, power draw, and VRAM usage need their own visibility because they shape AI runtime capacity.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Collection</span>
+            <h3>Prometheus scrapes the metrics</h3>
+            <p>Prometheus gives the platform a consistent metrics layer for runtime, host, and GPU data.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Visualization</span>
+            <h3>Grafana turns signals into an operating view</h3>
+            <p>Grafana shows runtime health, latency, throughput, queueing, and GPU behavior without relying on guesswork.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Benchmark Path</span>
+            <h3>Locust creates controlled load</h3>
+            <p>Load testing makes it possible to watch the platform while requests move through the same API path used by clients.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Benchmark Methodology</p>
+          <h2>The benchmark tested the same path real clients would use.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Load Path</span>
+            <p>
+              Locust generated load against the OpenAI-compatible API path instead of bypassing the application flow.
+              That made the test closer to how clients would actually use the platform.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Test Shape</span>
+            <p>
+              The validation included baseline testing and multi-user load testing so the platform could be observed as
+              demand increased.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Operating Goal</span>
+            <p>
+              The goal was not to chase synthetic benchmark scores. The goal was to understand throughput, latency,
+              queueing, failures, and GPU behavior under load.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Performance Results Summary</p>
+          <h2>The validated baseline showed useful local inference capacity without request failures or observed queueing.</h2>
+        </div>
+        <div class="case-outcome-dashboard reveal" aria-label="NovaLab benchmark results summary">
+          <article><span>50-User Throughput</span><strong>Roughly 1,439 generation tokens/sec</strong></article>
+          <article><span>Benchmark Failures</span><strong>Zero failures</strong></article>
+          <article><span>Waiting Requests</span><strong>Zero observed across benchmark runs</strong></article>
+          <article><span>GPU Utilization</span><strong>100% during the 50-user run</strong></article>
+          <article><span>GPU Power Draw</span><strong>Approximately 249W</strong></article>
+          <article><span>GPU Temperature</span><strong>Around 56C during the 50-user run</strong></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Metrics Tracked</p>
+          <h2>The benchmark combined runtime, request, and GPU signals instead of relying on a single headline number.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Runtime Throughput</span>
+            <h3>Generation tokens/sec</h3>
+            <p>Shows how much generated output the runtime produced during the test window.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Input Throughput</span>
+            <h3>Prompt tokens/sec</h3>
+            <p>Shows prompt processing demand alongside generated output.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>User Experience</span>
+            <h3>Average latency</h3>
+            <p>Shows the typical request experience during the benchmark run.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Tail Latency</span>
+            <h3>P95 latency</h3>
+            <p>Shows whether slower requests stayed within an understandable range.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Concurrency</span>
+            <h3>Requests running</h3>
+            <p>Shows active work inside the runtime while load is applied.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Queueing</span>
+            <h3>Requests waiting</h3>
+            <p>Shows whether demand is backing up before the runtime can process it.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Traffic Rate</span>
+            <h3>Current RPS</h3>
+            <p>Shows the request rate being applied to the platform.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Reliability</span>
+            <h3>Failures</h3>
+            <p>Shows whether the benchmark exposed request or service errors.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>GPU Load</span>
+            <h3>GPU utilization</h3>
+            <p>Shows whether the GPU is idle, useful, or saturated.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Power</span>
+            <h3>GPU power draw</h3>
+            <p>Shows the electrical demand created by the inference workload.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Thermals</span>
+            <h3>GPU temperature</h3>
+            <p>Shows whether the card stays within a stable operating range during load.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Memory</span>
+            <h3>VRAM usage</h3>
+            <p>Shows how much GPU memory the model and runtime consume.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Capacity Planning Interpretation</p>
+          <h2>The useful result is not just that the platform ran. It showed where capacity decisions have to come from.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal">
+            <span>01</span>
+            <h3>Local inference can be useful</h3>
+            <p>The RTX 3090 can serve useful local inference workloads when the model and runtime are sized correctly.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>02</span>
+            <h3>VRAM matters as much as compute</h3>
+            <p>Model format, memory footprint, and quantization affect capacity as much as raw GPU horsepower.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>03</span>
+            <h3>Saturation has to be measured</h3>
+            <p>GPU load, queueing, latency, and failures make capacity visible. Guessing is not an operating model.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>04</span>
+            <h3>Waiting requests matter</h3>
+            <p>Zero observed waiting requests are more useful than a polished demo because they show whether the service is backing up.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>05</span>
+            <h3>Observability changes the decision</h3>
+            <p>The metrics help decide whether the platform is healthy, saturated, or misconfigured before changing the design.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Evidence Placeholder</p>
+          <h2>Evidence screenshots pending.</h2>
+        </div>
+        <div class="case-benchmark-evidence reveal" aria-label="Planned NovaLab benchmark evidence screenshots">
+          <article class="case-evidence-group">
+            <div class="project-meta">
+              <span>Grafana baseline dashboard</span>
+              <span>Pending</span>
+            </div>
+            <p>Baseline runtime, latency, throughput, queueing, and GPU behavior.</p>
+          </article>
+          <article class="case-evidence-group">
+            <div class="project-meta">
+              <span>Grafana 25-user dashboard</span>
+              <span>Pending</span>
+            </div>
+            <p>Intermediate load view showing platform behavior before the 50-user run.</p>
+          </article>
+          <article class="case-evidence-group">
+            <div class="project-meta">
+              <span>Grafana 50-user dashboard</span>
+              <span>Pending</span>
+            </div>
+            <p>High-load dashboard view for the validated 50-user benchmark.</p>
+          </article>
+          <article class="case-evidence-group">
+            <div class="project-meta">
+              <span>Locust test results</span>
+              <span>Pending</span>
+            </div>
+            <p>Request-level benchmark results from the load test run.</p>
+          </article>
+          <article class="case-evidence-group">
+            <div class="project-meta">
+              <span>nvidia-smi during load</span>
+              <span>Pending</span>
+            </div>
+            <p>GPU utilization, power, temperature, and memory state during benchmark pressure.</p>
+          </article>
+          <article class="case-evidence-group">
+            <div class="project-meta">
+              <span>Prometheus targets</span>
+              <span>Pending</span>
+            </div>
+            <p>Monitoring target state for the runtime, host, and GPU telemetry path.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Engineering Decision Log</p>
+          <h2>The build forced practical decisions about baseline control, visibility, model fit, and recovery.</h2>
+        </div>
+        <div class="case-table-panel reveal">
+          <table class="case-benchmark-table">
+            <thead>
+              <tr>
+                <th scope="col">Decision</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Outcome</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Rebuild from a clean baseline</th>
+                <td>The environment had accumulated drift and troubleshooting noise.</td>
+                <td>Produced a known-good platform state that could be validated, backed up, and extended.</td>
+              </tr>
+              <tr>
+                <th scope="row">Validate GPU ownership before blaming the AI runtime</th>
+                <td>GPU passthrough, drivers, and container visibility had to be proven before troubleshooting model behavior.</td>
+                <td>Separated infrastructure problems from runtime problems.</td>
+              </tr>
+              <tr>
+                <th scope="row">Use observability before making performance claims</th>
+                <td>AI demos can look successful while hiding latency, queueing, saturation, or failures.</td>
+                <td>Prometheus and Grafana became part of the platform, not an afterthought.</td>
+              </tr>
+              <tr>
+                <th scope="row">Correct misleading metric queries</th>
+                <td>Some raw counters appeared useful but did not answer the real operational question.</td>
+                <td>Rate-based views made throughput and latency easier to interpret.</td>
+              </tr>
+              <tr>
+                <th scope="row">Collect GPU telemetry separately</th>
+                <td>Default runtime metrics did not fully explain GPU behavior.</td>
+                <td>GPU utilization, power, temperature, and VRAM became visible alongside runtime metrics.</td>
+              </tr>
+              <tr>
+                <th scope="row">Use quantization when full model size exceeded VRAM</th>
+                <td>The Qwen3-14B full model exceeded the RTX 3090 24GB constraint.</td>
+                <td>Qwen3-14B-AWQ became the practical path for fitting larger models into the hardware envelope.</td>
+              </tr>
+              <tr>
+                <th scope="row">Protect validated state with snapshots and NAS backup</th>
+                <td>Once the platform worked, the working state became an asset.</td>
+                <td>Reduced risk of losing progress during future experimentation.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Challenges and Operational Response</p>
+          <h2>The useful work was not avoiding problems. It was isolating them and responding in the right layer.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>GPU Driver / Runtime Conflicts</span>
+            <h3>Prove the hardware path first</h3>
+            <ul class="case-metric-list">
+              <li><span>Problem</span><strong>Driver, passthrough, and runtime visibility issues made failures hard to attribute.</strong></li>
+              <li><span>Response</span><strong>Validated GPU ownership before treating the AI runtime as the problem.</strong></li>
+              <li><span>Lesson</span><strong>Infrastructure layers need to be proven before model behavior means anything.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Platform State Drift</span>
+            <h3>Return to a known baseline</h3>
+            <ul class="case-metric-list">
+              <li><span>Problem</span><strong>Earlier troubleshooting left too much drift in the environment.</strong></li>
+              <li><span>Response</span><strong>Rebuilt the platform from a clean baseline.</strong></li>
+              <li><span>Lesson</span><strong>A clean baseline is often faster than continuing to debug a noisy system.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Ollama Runtime Instability</span>
+            <h3>Choose the runtime that supports the operating goal</h3>
+            <ul class="case-metric-list">
+              <li><span>Problem</span><strong>The runtime path was not stable enough for the validation work.</strong></li>
+              <li><span>Response</span><strong>Moved the baseline to vLLM with an OpenAI-compatible API.</strong></li>
+              <li><span>Lesson</span><strong>The serving layer has to be selected for reliability, visibility, and repeatable testing.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>CUDA OOM on Qwen3-14B</span>
+            <h3>Treat VRAM as a hard design constraint</h3>
+            <ul class="case-metric-list">
+              <li><span>Problem</span><strong>The full Qwen3-14B model exceeded the available RTX 3090 24GB memory envelope.</strong></li>
+              <li><span>Response</span><strong>Used Qwen3-14B-AWQ as the practical larger-model path.</strong></li>
+              <li><span>Lesson</span><strong>Model size and format are capacity decisions, not just model-selection preferences.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Misleading Dashboard Metrics</span>
+            <h3>Make the dashboard answer the real question</h3>
+            <ul class="case-metric-list">
+              <li><span>Problem</span><strong>Some visible counters looked useful but did not explain throughput or latency clearly.</strong></li>
+              <li><span>Response</span><strong>Corrected the metric views so the dashboard reflected operational behavior.</strong></li>
+              <li><span>Lesson</span><strong>A valid metric can still answer the wrong question.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Custom GPU Telemetry</span>
+            <h3>Add the signals the platform needs</h3>
+            <ul class="case-metric-list">
+              <li><span>Problem</span><strong>Runtime metrics alone did not show enough about GPU load, power, temperature, and VRAM.</strong></li>
+              <li><span>Response</span><strong>Collected GPU telemetry separately and viewed it alongside runtime metrics.</strong></li>
+              <li><span>Lesson</span><strong>AI infrastructure needs hardware telemetry in the same operating view as service metrics.</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Operational Lessons</p>
+          <h2>The strongest lessons were basic infrastructure lessons applied to AI systems.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal">
+            <span>01</span>
+            <h3>AI infrastructure is still infrastructure</h3>
+            <p>The platform still depends on clean baselines, recoverability, monitoring, capacity planning, and operational discipline.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>02</span>
+            <h3>VRAM is a budget</h3>
+            <p>Model choice, context, format, and quantization all spend from the same limited pool.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>03</span>
+            <h3>Observability is not optional</h3>
+            <p>Without metrics, it is too easy to confuse a working demo with a service that can be operated.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>04</span>
+            <h3>Metrics need interpretation</h3>
+            <p>A metric can be accurate and still fail to answer the operational question being asked.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>05</span>
+            <h3>Runtime format matters</h3>
+            <p>The same model family can behave very differently depending on size, format, and memory requirements.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>06</span>
+            <h3>Recovery belongs in the build</h3>
+            <p>Once the platform reaches a validated state, protecting that state becomes part of the engineering work.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Next Build Pass</p>
+            <h2>The next NovaLab sections should cover recovery posture, screenshot evidence, and the final operating narrative.</h2>
+          </div>
+          <ul class="case-roadmap" aria-label="Future NovaLab case study sections">
+            <li>Recovery Posture</li>
+            <li>Screenshot Evidence</li>
+            <li>Evidence Gallery</li>
+            <li>Matt's Notes</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Matt Smalling</span>
+      <span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span>
+    </footer>
+
+    <script src="../src/main.js"></script>
+  </body>
+</html>

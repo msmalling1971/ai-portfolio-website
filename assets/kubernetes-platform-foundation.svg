@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 620" role="img" aria-labelledby="title desc">
+  <title id="title">NovaLab Kubernetes Platform Foundation architecture</title>
+  <desc id="desc">A layered architecture diagram showing Proxmox, Terraform, Ubuntu cloud images, a K3s cluster, Helm, platform services, and planned future components.</desc>
+  <defs>
+    <style>
+      .bg { fill: #101419; }
+      .panel { fill: #171c22; stroke: rgba(229,220,204,.22); stroke-width: 1.5; }
+      .node { fill: #1d232b; stroke: rgba(229,220,204,.28); stroke-width: 1.5; }
+      .node-alt { fill: #202832; stroke: rgba(126,160,183,.48); stroke-width: 1.5; }
+      .future { fill: rgba(126,160,183,.08); stroke: rgba(126,160,183,.52); stroke-width: 1.5; stroke-dasharray: 8 8; }
+      .label { fill: #f1eadf; font: 700 22px "Segoe UI", Arial, sans-serif; }
+      .small { fill: #b8afa2; font: 500 15px "Segoe UI", Arial, sans-serif; }
+      .mono { fill: #c58b3b; font: 700 14px Consolas, monospace; text-transform: uppercase; }
+      .steel { fill: #7ea0b7; font: 700 14px Consolas, monospace; }
+      .line { stroke: rgba(197,139,59,.72); stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .soft-line { stroke: rgba(126,160,183,.58); stroke-width: 2; fill: none; marker-end: url(#arrow-soft); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#c58b3b"/>
+    </marker>
+    <marker id="arrow-soft" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#7ea0b7"/>
+    </marker>
+    <pattern id="grid" width="46" height="46" patternUnits="userSpaceOnUse">
+      <path d="M46 0H0V46" fill="none" stroke="rgba(241,234,223,.045)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect class="bg" width="1180" height="620"/>
+  <rect width="1180" height="620" fill="url(#grid)"/>
+
+  <rect class="panel" x="48" y="44" width="1084" height="532" rx="0"/>
+  <text class="mono" x="82" y="84">NovaLab Kubernetes Platform Foundation</text>
+  <text class="small" x="82" y="112">Infrastructure as Code, clean operating-system provisioning, and Kubernetes application management separated by responsibility.</text>
+
+  <rect class="node" x="92" y="164" width="210" height="92"/>
+  <text class="steel" x="118" y="195">Infrastructure</text>
+  <text class="label" x="118" y="226">Proxmox Cluster</text>
+
+  <path class="line" d="M302 210H386"/>
+
+  <rect class="node-alt" x="386" y="164" width="190" height="92"/>
+  <text class="steel" x="412" y="195">Provisioning</text>
+  <text class="label" x="412" y="226">Terraform</text>
+
+  <path class="line" d="M576 210H660"/>
+
+  <rect class="node" x="660" y="164" width="228" height="92"/>
+  <text class="steel" x="686" y="195">Base Images</text>
+  <text class="label" x="686" y="226">Ubuntu Cloud Images</text>
+
+  <path class="line" d="M774 256V326"/>
+
+  <rect class="node-alt" x="504" y="326" width="540" height="126"/>
+  <text class="steel" x="532" y="358">Kubernetes Layer</text>
+  <text class="label" x="532" y="391">K3s Cluster</text>
+  <text class="small" x="532" y="420">1 control plane, 2 workers, persistent KUBECONFIG, verified node and pod health</text>
+
+  <rect class="node" x="126" y="326" width="250" height="126"/>
+  <text class="steel" x="154" y="358">Admin Tooling</text>
+  <text class="label" x="154" y="391">Bootstrap Scripts</text>
+  <text class="small" x="154" y="420">Helm, kubectl access, k9s, operator workstation setup</text>
+
+  <path class="soft-line" d="M376 389H504"/>
+
+  <path class="line" d="M774 452V500"/>
+
+  <rect class="node" x="504" y="500" width="250" height="56"/>
+  <text class="label" x="532" y="535">Helm</text>
+
+  <path class="line" d="M754 528H822"/>
+
+  <rect class="node-alt" x="822" y="488" width="250" height="88"/>
+  <text class="steel" x="850" y="520">Platform Services</text>
+  <text class="label" x="850" y="551">Metrics Server</text>
+  <text class="label" x="850" y="574">cert-manager</text>
+
+  <rect class="future" x="92" y="488" width="336" height="88"/>
+  <text class="steel" x="120" y="520">Future Components</text>
+  <text class="small" x="120" y="550">MetalLB, Ingress, Prometheus, Grafana, Loki, Argo CD, storage, AI workloads</text>
+</svg>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+            content="NovaLab Kubernetes Platform Foundation case study: a repeatable Kubernetes platform on Proxmox using Infrastructure as Code, cloud-init, Helm, Metrics Server, cert-manager, and version-controlled engineering practices."
+    />
+    <title>NovaLab Kubernetes Platform Foundation | Matt Smalling</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+  </head>
+  <body>
+    <div class="site-grid" aria-hidden="true"></div>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html#home" aria-label="Matt Smalling home">
+        <span class="brand-mark">MS</span>
+        <span>
+          <strong>Matt Smalling</strong>
+          <small>Infrastructure Modernization</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Open navigation">
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" data-nav>
+        <a href="../index.html#projects">Projects</a>
+        <a href="../index.html#leadership">Leadership</a>
+        <a href="../index.html#philosophy">Modernization</a>
+        <a href="../index.html#novalab-status">NovaLab</a>
+        <a href="../index.html#learning">Learning</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="section case-hero">
+        <div class="case-hero-copy reveal">
+          <p class="eyebrow">Case Study - Kubernetes Platform Engineering</p>
+          <h1>NovaLab Kubernetes Platform Foundation</h1>
+          <p class="hero-lede">
+            This project builds a repeatable Kubernetes platform on Proxmox using Infrastructure as Code, cloud-init,
+            bootstrap automation, and Helm-managed platform services.
+          </p>
+          <p class="hero-lede">
+            The work is focused on platform construction and operational repeatability: create the infrastructure, keep
+            the operating system clean, configure administrator tooling, install platform services, and document the
+            decisions that make the environment easier to rebuild and evolve.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#architecture">Architecture</a>
+            <a class="button secondary" href="../index.html#projects">Back to Projects</a>
+          </div>
+        </div>
+
+        <div class="case-spec-panel reveal" aria-label="NovaLab Kubernetes platform baseline">
+          <div class="panel-topline">
+            <span>Platform Status</span>
+            <span class="status-dot">Foundation Complete</span>
+          </div>
+          <ul>
+            <li><span>Infrastructure</span><strong>Proxmox VE</strong></li>
+            <li><span>Provisioning</span><strong>Terraform + cloud-init</strong></li>
+            <li><span>Operating System</span><strong>Ubuntu Server 24.04 LTS</strong></li>
+            <li><span>Kubernetes</span><strong>K3s</strong></li>
+            <li><span>Cluster Shape</span><strong>1 control plane / 2 workers</strong></li>
+            <li><span>Services</span><strong>Metrics Server + cert-manager</strong></li>
+            <li><span>Admin Tooling</span><strong>kubectl, Helm, k9s</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Project Goal</p>
+          <h2>The goal was not to deploy Kubernetes once. The goal was to build a foundation that can be repeated.</h2>
+        </div>
+        <div class="case-summary-grid">
+          <article class="case-summary reveal">
+            <span>Infrastructure Pattern</span>
+            <p>
+              Proxmox hosts the virtual machines, while Terraform defines the infrastructure path and cloud-init handles
+              first-boot operating-system configuration.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Platform Pattern</span>
+            <p>
+              K3s provides a lightweight Kubernetes control plane and worker layer suitable for lab platform work,
+              service validation, and future application hosting.
+            </p>
+          </article>
+          <article class="case-summary reveal">
+            <span>Operating Pattern</span>
+            <p>
+              Bootstrap scripts configure administrator tooling after node provisioning, keeping base infrastructure
+              setup separate from operator workflow setup.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Technology Stack</p>
+          <h2>The stack separates infrastructure, Kubernetes operations, platform services, and development workflow.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Infrastructure</span>
+            <h3>Proxmox, Ubuntu, cloud-init, Terraform</h3>
+            <p>VM lifecycle, base OS configuration, and repeatable provisioning are handled before Kubernetes enters the picture.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Platform</span>
+            <h3>K3s, Helm, kubectl, k9s</h3>
+            <p>The cluster is operated with standard Kubernetes tooling and Helm-based application installation.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Services</span>
+            <h3>Metrics Server and cert-manager</h3>
+            <p>Metrics Server validates resource visibility, while cert-manager introduces certificate automation and CRD-driven platform extension.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Development</span>
+            <h3>Git and GitHub</h3>
+            <p>Git becomes the durable record for infrastructure definitions, scripts, installation notes, and troubleshooting history.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Architecture Overview</p>
+          <h2>Each layer has a clear responsibility, from Proxmox infrastructure to Kubernetes platform services.</h2>
+        </div>
+        <div class="case-architecture reveal">
+          <div class="case-layer-map">
+            <article><span>Proxmox Cluster</span><strong>Provides the virtualization layer for the platform nodes.</strong></article>
+            <article><span>Terraform</span><strong>Defines and creates the virtual machine infrastructure.</strong></article>
+            <article><span>cloud-init</span><strong>Configures the Ubuntu operating-system baseline at first boot.</strong></article>
+            <article><span>K3s Cluster</span><strong>Runs one control plane and two worker nodes as the Kubernetes foundation.</strong></article>
+            <article><span>Helm</span><strong>Installs and manages Kubernetes applications as platform services.</strong></article>
+            <article><span>Services</span><strong>Metrics Server and cert-manager validate the first platform service layer.</strong></article>
+            <article><span>Future</span><strong>Networking, observability, GitOps, storage, AI workloads, and media services build on this baseline.</strong></article>
+          </div>
+          <div class="case-diagram-slot" aria-label="Kubernetes platform responsibility model">
+            <span>Responsibility Model</span>
+            <strong>Terraform creates infrastructure, cloud-init configures the OS, bootstrap scripts configure administrators, and Helm manages platform services.</strong>
+          </div>
+        </div>
+        <figure class="case-figure reveal">
+          <img src="../assets/kubernetes-platform-foundation.svg" alt="NovaLab Kubernetes Platform Foundation architecture diagram" />
+          <figcaption>Proxmox to Terraform to Ubuntu cloud images to K3s, then Helm-managed platform services and future components.</figcaption>
+        </figure>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Accomplishments</p>
+          <h2>The foundation is validated across infrastructure, administration, and first platform services.</h2>
+        </div>
+        <div class="case-outcome-dashboard reveal" aria-label="Kubernetes platform accomplishments">
+          <article><span>Cluster</span><strong>Three-node K3s cluster</strong></article>
+          <article><span>Control Plane</span><strong>One control-plane node</strong></article>
+          <article><span>Workers</span><strong>Two worker nodes</strong></article>
+          <article><span>Provisioning</span><strong>Terraform deployment</strong></article>
+          <article><span>OS Setup</span><strong>cloud-init provisioning</strong></article>
+          <article><span>Access</span><strong>Persistent KUBECONFIG</strong></article>
+          <article><span>Admin Tools</span><strong>Helm and k9s installed</strong></article>
+          <article><span>Health</span><strong>Cluster health verified</strong></article>
+          <article><span>Metrics</span><strong>kubectl top validated</strong></article>
+          <article><span>TLS</span><strong>cert-manager installed</strong></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Validation</p>
+          <h2>The first services were verified at the Kubernetes object layer, not just installed and assumed working.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Metrics Server</span>
+            <h3>Resource metrics available through kubectl</h3>
+            <ul class="case-metric-list">
+              <li><span>Check</span><strong>kubectl top nodes</strong></li>
+              <li><span>Check</span><strong>kubectl top pods</strong></li>
+              <li><span>Result</span><strong>Cluster resource visibility confirmed.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>cert-manager</span>
+            <h3>Helm-managed certificate automation layer</h3>
+            <ul class="case-metric-list">
+              <li><span>Check</span><strong>Helm release verified.</strong></li>
+              <li><span>Check</span><strong>CRDs verified.</strong></li>
+              <li><span>Result</span><strong>cert-manager pods running in the cluster.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Administration</span>
+            <h3>Operator workflow made persistent</h3>
+            <ul class="case-metric-list">
+              <li><span>Check</span><strong>KUBECONFIG survives new shell sessions.</strong></li>
+              <li><span>Check</span><strong>Helm and k9s available from the operator shell.</strong></li>
+              <li><span>Result</span><strong>Day-two cluster access is repeatable.</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Engineering Decision Log</p>
+          <h2>The project works because each tool has a defined boundary.</h2>
+        </div>
+        <div class="case-table-panel reveal">
+          <table class="case-benchmark-table">
+            <thead>
+              <tr>
+                <th scope="col">Decision</th>
+                <th scope="col">Reason</th>
+                <th scope="col">Outcome</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Keep Ubuntu as clean as possible</th>
+                <td>The base OS should stay predictable, minimal, and easy to replace.</td>
+                <td>Reduced configuration drift and made node behavior easier to explain.</td>
+              </tr>
+              <tr>
+                <th scope="row">Automate admin tooling with bootstrap scripts</th>
+                <td>Operator tools change more often than VM infrastructure or base OS setup.</td>
+                <td>Helm, k9s, and kubeconfig setup became repeatable without bloating cloud-init.</td>
+              </tr>
+              <tr>
+                <th scope="row">Separate cloud-init responsibilities from bootstrap scripts</th>
+                <td>cloud-init should handle first-boot OS configuration, not every administrative workflow.</td>
+                <td>The project gained a clearer boundary between node provisioning and operator setup.</td>
+              </tr>
+              <tr>
+                <th scope="row">Use Terraform for infrastructure only</th>
+                <td>Terraform is best used here to create VMs and infrastructure state, not install Kubernetes applications.</td>
+                <td>Infrastructure provisioning stayed separate from Kubernetes service lifecycle management.</td>
+              </tr>
+              <tr>
+                <th scope="row">Use Helm for Kubernetes applications</th>
+                <td>Kubernetes services need releases, chart values, upgrades, and clean uninstall paths.</td>
+                <td>Metrics Server and cert-manager became managed platform components.</td>
+              </tr>
+              <tr>
+                <th scope="row">Organize the repo for long-term growth</th>
+                <td>Platform projects accumulate scripts, docs, cloud-init files, and service definitions quickly.</td>
+                <td>The repository became a maintainable platform artifact instead of a set of one-off commands.</td>
+              </tr>
+              <tr>
+                <th scope="row">Favor reusable structure over one-off deployment</th>
+                <td>The next cluster iteration should not require rediscovering the same steps.</td>
+                <td>The work shifted from learning commands to building a reusable platform foundation.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Operational Challenges</p>
+          <h2>The build surfaced practical issues at the virtualization, OS, tooling, and Kubernetes layers.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Proxmox Console</span>
+            <h3>Serial console behavior was not always useful</h3>
+            <ul class="case-metric-list">
+              <li><span>Issue</span><strong>Serial console behavior made early node troubleshooting less direct.</strong></li>
+              <li><span>Resolution</span><strong>Use VGA console when boot and login inspection are needed.</strong></li>
+              <li><span>Lesson</span><strong>Console mode is part of VM template validation.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>SSH Access</span>
+            <h3>cloud-init disabled password authentication</h3>
+            <ul class="case-metric-list">
+              <li><span>Issue</span><strong>Password login failed after first boot.</strong></li>
+              <li><span>Resolution</span><strong>Use SSH key access and document the expected login path.</strong></li>
+              <li><span>Lesson</span><strong>A secure default can look like a failure if it is not documented.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>KUBECONFIG</span>
+            <h3>Cluster access needed to persist</h3>
+            <ul class="case-metric-list">
+              <li><span>Issue</span><strong>Manual kubeconfig setup did not survive clean operator sessions.</strong></li>
+              <li><span>Resolution</span><strong>Configure persistent KUBECONFIG through the bootstrap workflow.</strong></li>
+              <li><span>Lesson</span><strong>Day-two access is part of the platform, not a convenience step.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Helm</span>
+            <h3>Service installation needed the right tool</h3>
+            <ul class="case-metric-list">
+              <li><span>Issue</span><strong>Platform services needed repeatable install and release tracking.</strong></li>
+              <li><span>Resolution</span><strong>Install Helm and use charts for Kubernetes applications.</strong></li>
+              <li><span>Lesson</span><strong>Application lifecycle belongs in the Kubernetes layer.</strong></li>
+            </ul>
+          </article>
+          <article class="case-detail reveal">
+            <span>Object Model</span>
+            <h3>Kubernetes hierarchy had to become visible</h3>
+            <ul class="case-metric-list">
+              <li><span>Issue</span><strong>cert-manager introduced releases, CRDs, namespaces, deployments, services, and pods.</strong></li>
+              <li><span>Resolution</span><strong>Verify each object layer instead of treating the install as a black box.</strong></li>
+              <li><span>Lesson</span><strong>Kubernetes operations depend on knowing which object type you are inspecting.</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Lessons Learned</p>
+          <h2>The useful lesson was the separation of responsibilities across the platform toolchain.</h2>
+        </div>
+        <div class="case-value-grid">
+          <article class="case-value reveal">
+            <span>01</span>
+            <h3>Terraform creates infrastructure</h3>
+            <p>It defines and provisions the virtual machines. It should not become the owner of every Kubernetes service.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>02</span>
+            <h3>cloud-init configures operating systems</h3>
+            <p>It is the right place for first-boot OS identity, access, package, and baseline configuration.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>03</span>
+            <h3>Bootstrap scripts configure administrator tooling</h3>
+            <p>They handle the operator workflow: persistent kubeconfig, Helm, k9s, and local control-plane access.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>04</span>
+            <h3>Helm manages Kubernetes applications</h3>
+            <p>Platform services need release state, chart values, repeatable upgrades, and clean rollback paths.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>05</span>
+            <h3>CRDs extend Kubernetes</h3>
+            <p>cert-manager is not only pods. It adds new Kubernetes object types that the platform can use later.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>06</span>
+            <h3>k9s improves operational inspection</h3>
+            <p>It gives a practical interface over kubectl for watching resources, namespaces, pods, and service state.</p>
+          </article>
+          <article class="case-value reveal">
+            <span>07</span>
+            <h3>Repository organization matters early</h3>
+            <p>Platform engineering projects grow quickly. Structure becomes part of the operating model.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Repository Improvements</p>
+          <h2>The repository now supports repeatability, troubleshooting, and future platform evolution.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>README</span>
+            <h3>Project entry point</h3>
+            <p>Gives the project a current-state summary, stack overview, and a clear place to start.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>INSTALL Guide</span>
+            <h3>Repeatable build path</h3>
+            <p>Captures the install sequence so the platform can be rebuilt without relying on terminal history.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>TROUBLESHOOTING Guide</span>
+            <h3>Operational memory</h3>
+            <p>Documents real issues and resolutions while the details are still fresh.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>bootstrap-control.sh</span>
+            <h3>Administrator setup automation</h3>
+            <p>Automates the tooling and kubeconfig work needed to operate the cluster consistently.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>cloud-init Directory</span>
+            <h3>OS provisioning boundary</h3>
+            <p>Keeps first-boot configuration separate from platform scripts and documentation.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>docs and scripts</span>
+            <h3>Long-term maintainability</h3>
+            <p>Gives runbooks, decisions, helper scripts, and future service work stable places to live.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Foundation Readiness Assessment</p>
+          <h2>The foundation is validated; the next layers are planned platform work.</h2>
+        </div>
+        <div class="case-table-panel reveal">
+          <table class="case-benchmark-table">
+            <thead>
+              <tr>
+                <th scope="col">Area</th>
+                <th scope="col">Status</th>
+                <th scope="col">Assessment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Infrastructure</th><td>Ready</td><td>Proxmox VM foundation is in place.</td></tr>
+              <tr><th scope="row">Terraform</th><td>Ready</td><td>Infrastructure deployment is repeatable.</td></tr>
+              <tr><th scope="row">Cloud-init</th><td>Ready</td><td>OS provisioning is separated and documented.</td></tr>
+              <tr><th scope="row">Helm</th><td>Ready</td><td>Kubernetes application management is available.</td></tr>
+              <tr><th scope="row">Metrics</th><td>Ready</td><td>Metrics Server is installed and validated.</td></tr>
+              <tr><th scope="row">TLS Management</th><td>Ready</td><td>cert-manager is installed with CRDs and running pods.</td></tr>
+              <tr><th scope="row">Ingress</th><td>Planned</td><td>Ingress controller selection and configuration are next.</td></tr>
+              <tr><th scope="row">Load Balancer</th><td>Planned</td><td>MetalLB or equivalent lab load-balancer pattern is planned.</td></tr>
+              <tr><th scope="row">GitOps</th><td>Planned</td><td>Argo CD is planned for declarative application delivery.</td></tr>
+              <tr><th scope="row">Observability</th><td>Planned</td><td>Prometheus, Grafana, and Loki are planned beyond Metrics Server.</td></tr>
+              <tr><th scope="row">Persistent Storage</th><td>Planned</td><td>Storage class and data persistence patterns still need selection.</td></tr>
+              <tr><th scope="row">Application Platform</th><td>Planned</td><td>Application hosting patterns come after networking, storage, and GitOps.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Future Roadmap</p>
+          <h2>The platform foundation is complete; the next work adds networking, observability, delivery, and workloads.</h2>
+        </div>
+        <ol class="timeline">
+          <li class="reveal">
+            <span>Phase 1</span>
+            <h3>Platform Foundation</h3>
+            <p>Completed: Proxmox, Terraform, cloud-init, K3s, administrator tooling, Metrics Server, and cert-manager.</p>
+          </li>
+          <li class="reveal">
+            <span>Phase 2</span>
+            <h3>Networking</h3>
+            <p>Add MetalLB and ingress so services can be exposed through a cleaner platform access model.</p>
+          </li>
+          <li class="reveal">
+            <span>Phase 3</span>
+            <h3>Platform Services</h3>
+            <p>Add Prometheus, Grafana, and Loki for observability beyond the first resource metrics layer.</p>
+          </li>
+          <li class="reveal">
+            <span>Phase 4</span>
+            <h3>GitOps</h3>
+            <p>Use Argo CD and automated deployments to move application state into a declarative delivery model.</p>
+          </li>
+          <li class="reveal">
+            <span>Phase 5</span>
+            <h3>AI and Media Platform</h3>
+            <p>Extend the platform toward GPU workloads, inference, Tdarr, Jellyfin, and other service workloads.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">Matt's Notes</p>
+            <h2>This project changed Kubernetes from a command list into a platform model.</h2>
+          </div>
+          <div class="case-notes-copy">
+            <p>
+              What surprised me was how quickly the work became less about Kubernetes commands and more about
+              boundaries. Terraform creates infrastructure. cloud-init configures the operating system. Bootstrap
+              scripts configure the administrator experience. Helm manages Kubernetes applications. Once those lines
+              were clear, the whole platform became easier to reason about.
+            </p>
+            <p>
+              The biggest lesson was that Kubernetes is an operational surface, not just a cluster. Installing Metrics
+              Server and cert-manager forced me to understand releases, namespaces, pods, CRDs, and the object hierarchy
+              behind the services.
+            </p>
+            <p>
+              I also realized this follows the same automation philosophy I used years ago with Windows batch deployment
+              scripts: remove repeatable manual work, make the next run cleaner, and leave enough notes that someone
+              else can trust the process later.
+            </p>
+            <p>
+              Repository organization mattered earlier than I expected. At first it feels like ceremony. Then the repo
+              has cloud-init files, bootstrap scripts, install notes, troubleshooting history, docs, and a roadmap. The
+              structure becomes part of the platform.
+            </p>
+            <p>
+              This project represents a shift from learning Kubernetes commands to building a reusable platform. That
+              is the part that matters most: the platform can now grow into networking, observability, GitOps, storage,
+              AI workloads, and media workloads without starting from scratch.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="case-next reveal">
+          <div>
+            <p class="eyebrow">Next Build Pass</p>
+            <h2>The next platform layer should make service exposure, observability, and delivery more repeatable.</h2>
+          </div>
+          <ul class="case-roadmap" aria-label="Future Kubernetes platform work">
+            <li>MetalLB</li>
+            <li>Ingress</li>
+            <li>Prometheus</li>
+            <li>Grafana</li>
+            <li>Loki</li>
+            <li>Argo CD</li>
+            <li>Persistent Storage</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Matt Smalling</span>
+      <span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span>
+    </footer>
+
+    <script src="../src/main.js"></script>
+  </body>
+</html>

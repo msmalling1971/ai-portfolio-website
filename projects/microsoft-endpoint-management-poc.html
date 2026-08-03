@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A Windows 11 Enterprise proof of concept evaluating Microsoft Entra join, Intune policy delivery, BitLocker, Microsoft Defender security controls, endpoint validation, and managed rollback." />
+    <title>Microsoft Endpoint Management Proof of Concept | Matt Smalling</title>
+    <link rel="stylesheet" href="../src/styles.css" />
+  </head>
+  <body>
+    <div class="site-grid" aria-hidden="true"></div>
+    <header class="site-header" data-header>
+      <a class="brand" href="../index.html#home" aria-label="Matt Smalling home"><span class="brand-mark">MS</span><span><strong>Matt Smalling</strong><small>Infrastructure Modernization</small></span></a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-label="Open navigation"><span></span><span></span></button>
+      <nav class="site-nav" data-nav><a href="../index.html#about">About</a><a href="../index.html#mentorship">Mentorship</a><a href="../index.html#platform">Platform</a><a href="../index.html#lab">AI Lab</a><a href="../index.html#projects">Projects</a><a href="../index.html#contact">Contact</a></nav>
+    </header>
+    <main>
+      <section class="section case-hero">
+        <div class="case-hero-copy reveal">
+          <p class="eyebrow">Case Study - Microsoft Endpoint Engineering</p>
+          <h1>Microsoft Endpoint Management Proof of Concept</h1>
+          <p class="hero-lede">A controlled Windows 11 Enterprise evaluation connecting Microsoft Entra identity, Intune policy, endpoint security, validation, and rollback.</p>
+          <p class="hero-lede">Privately maintained enterprise-style proof of concept; not a production fleet deployment.</p>
+          <div class="hero-actions"><a class="button primary" href="#architecture">Architecture</a><a class="button secondary" href="../index.html#projects">Back to Projects</a></div>
+        </div>
+        <div class="case-spec-panel reveal" aria-label="Endpoint management proof of concept baseline">
+          <div class="panel-topline"><span>Evaluation Status</span><span class="status-dot">Validated Lab Baseline</span></div>
+          <ul><li><span>Environment</span><strong>Private proof of concept</strong></li><li><span>Endpoint</span><strong>Windows 11 Enterprise</strong></li><li><span>Management</span><strong>Entra ID + Intune</strong></li><li><span>Pilot</span><strong>GRP-Test-Devices</strong></li><li><span>Focus</span><strong>Endpoint Security</strong></li></ul>
+        </div>
+      </section>
+
+      <section class="section"><div class="case-summary-grid"><article class="case-summary reveal"><span>Objective</span><p>Evaluate Microsoft identity, endpoint management, security policy, authentication, and rollback as one operating system rather than isolated features.</p></article><article class="case-summary reveal"><span>Operating Approach</span><p>Pilot before production, validate locally, isolate exceptions, and correct configuration through centrally managed policy.</p></article></div></section>
+
+      <section class="section case-overview">
+        <div class="section-heading reveal"><p class="eyebrow">Why This Project Matters</p><h2>Hands-on validation closes the gap between documentation and operating behavior.</h2></div>
+        <div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Engineering Context</p><h2>Modern endpoint management is a connected system.</h2></div><div class="case-notes-copy"><p>As a former Head of Infrastructure Engineering, I built this proof of concept as part of my transition into modern Microsoft cloud endpoint management. Rather than relying only on documentation or certification material, I wanted to validate how Microsoft Entra ID, Intune, endpoint security, identity, and policy enforcement behave together in a controlled enterprise-style environment.</p></div></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Engineering Principles Applied</p><h2>Bound the change, prove the state, and preserve management authority.</h2></div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal"><span>01</span><h3>Pilot before production</h3><p>Use a controlled assignment boundary before considering broader scope.</p></article>
+          <article class="case-detail reveal"><span>02</span><h3>Trust endpoint evidence</h3><p>Correlate portal status with the effective operating state.</p></article>
+          <article class="case-detail reveal"><span>03</span><h3>Separate policy concerns</h3><p>Keep security baselines distinct from service exceptions.</p></article>
+          <article class="case-detail reveal"><span>04</span><h3>Correct the source</h3><p>Remediate managed configuration in Intune instead of creating local drift.</p></article>
+          <article class="case-detail reveal"><span>05</span><h3>Minimize exceptions</h3><p>Restrict temporary access by protocol, direction, and network scope.</p></article>
+          <article class="case-detail reveal"><span>06</span><h3>Validate each layer</h3><p>Test transport, resolution, authentication, and identity independently.</p></article>
+        </div>
+      </section>
+
+      <section class="section" id="architecture">
+        <div class="section-heading reveal"><p class="eyebrow">Architecture Overview</p><h2>Identity and policy converge on one controlled endpoint, then endpoint evidence closes the loop.</h2></div>
+        <div class="case-architecture reveal"><div class="case-layer-map">
+          <article><span>Microsoft 365 Tenant</span><strong>Provides the tenant boundary for identity and endpoint management.</strong></article>
+          <article><span>Microsoft Entra ID</span><strong>Device identity, BitLocker recovery-key escrow, and web-account RDP authentication.</strong></article>
+          <article><span>Microsoft Intune</span><strong>Enrolls the endpoint and delivers managed security configuration.</strong></article>
+          <article><span>GRP-Test-Devices</span><strong>Limits initial assignment to the controlled pilot endpoint.</strong></article>
+          <article><span>Endpoint Security</span><strong>BitLocker, Defender Firewall, separate firewall rules, and Defender Antivirus.</strong></article>
+          <article><span>CL-WIN11-002</span><strong>Proxmox-hosted Windows 11 Enterprise evaluation VM where identity and policy converge.</strong></article>
+          <article><span>PowerShell Validation</span><strong>Confirms identity, encryption, firewall, antivirus, connectivity, and registry state.</strong></article>
+        </div></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Scope and Constraints</p><h2>The environment reproduced enterprise operating patterns without claiming production scale.</h2></div>
+        <div class="case-detail-grid"><article class="case-detail reveal"><span>Scope</span><h3>Single pilot endpoint</h3><p>One Windows 11 Enterprise evaluation VM joined to Entra ID and managed through Intune.</p></article><article class="case-detail reveal"><span>Licensing</span><h3>Tenant-available capabilities</h3><p>Microsoft 365 E3 licensing and relevant capabilities were verified in the tenant at the time of testing.</p></article><article class="case-detail reveal"><span>Boundary</span><h3>Private environment</h3><p>No corporate fleet, production rollout, migration outcome, ROI, or Defender for Endpoint onboarding is claimed.</p></article></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Policy Design</p><h2>The baseline established posture; separate policies documented each exception.</h2></div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal"><span>Pilot</span><h3>GRP-Test-Devices</h3><p>Bounded initial assignment and created a known validation target.</p></article>
+          <article class="case-detail reveal"><span>Encryption</span><h3>BitLocker</h3><p>TPM 2.0 protection, numerical recovery password, and Entra recovery escrow.</p></article>
+          <article class="case-detail reveal"><span>Baseline</span><h3>Defender Firewall</h3><p>All profiles enabled, inbound blocked, outbound allowed, logging configured, and merge restricted where appropriate.</p></article>
+          <article class="case-detail reveal"><span>Exceptions</span><h3>Managed firewall rules</h3><p>Dedicated TCP 3389 rule and temporary subnet-scoped UDP 137 lab exception.</p></article>
+          <article class="case-detail reveal"><span>Protection</span><h3>Defender Antivirus</h3><p>Real-time, behavior, cloud, script, attachment, network, and PUA protections without broad exclusions.</p></article>
+          <article class="case-detail reveal"><span>User Context</span><h3>Settings restriction</h3><p>A separate user-targeted policy exposed the operational difference between user and device assignment.</p></article>
+        </div>
+        <div class="case-table-panel reveal"><table class="case-benchmark-table"><thead><tr><th scope="col">Policy</th><th scope="col">Protocol / Control</th><th scope="col">Scope</th><th scope="col">Purpose</th></tr></thead><tbody><tr><th scope="row">Firewall baseline</th><td>Default inbound block</td><td>Device pilot</td><td>Establish host posture</td></tr><tr><th scope="row">RDP rule</th><td>Inbound TCP 3389</td><td>Required management path</td><td>Permit Remote Desktop transport</td></tr><tr><th scope="row">Lab exception</th><td>Inbound UDP 137</td><td>Local lab subnet</td><td>Temporarily restore legacy short-name resolution</td></tr></tbody></table></div>
+        <div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Documented Technical Debt</p><h2>UDP 137 was a lab exception, not the target architecture.</h2></div><div class="case-notes-copy"><p>NetBIOS is legacy. The temporary rule was restricted to the local lab subnet while the dependency was investigated. It is not a production recommendation; the long-term improvement is managed DNS and removal of the exception.</p></div></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Implementation</p><h2>The build moved from identity and enrollment through security policy, validation, and managed recovery.</h2></div>
+        <div class="case-detail-grid"><article class="case-detail reveal"><span>01</span><h3>Identity and enrollment</h3><p>Joined CL-WIN11-002 to Entra ID and enrolled it in Intune.</p></article><article class="case-detail reveal"><span>02</span><h3>Pilot assignment</h3><p>Assigned the endpoint through GRP-Test-Devices.</p></article><article class="case-detail reveal"><span>03</span><h3>Encryption</h3><p>Deployed BitLocker and confirmed local protection and Entra escrow.</p></article><article class="case-detail reveal"><span>04</span><h3>Host firewall</h3><p>Deployed the default-block baseline and isolated required exceptions.</p></article><article class="case-detail reveal"><span>05</span><h3>Antivirus</h3><p>Deployed and inspected the Defender Antivirus baseline.</p></article><article class="case-detail reveal"><span>06</span><h3>Rollback</h3><p>Corrected the user-targeted Settings policy at the management source.</p></article></div>
+      </section>
+
+      <section class="section" id="validation">
+        <div class="section-heading reveal"><p class="eyebrow">Validation and Evidence</p><h2>Configuration status and effective endpoint state were treated as different forms of evidence.</h2></div>
+        <div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Validation Standard</p><h2>Administrative status was used to understand assignment and processing.</h2></div><div class="case-notes-copy"><p>Endpoint-side checks were used to validate effective state.</p></div></div>
+        <div class="case-implementation-grid">
+          <article class="case-detail reveal"><span>Identity</span><h3>Entra join</h3><pre class="case-code-block"><code>dsregcmd /status</code></pre></article>
+          <article class="case-detail reveal"><span>BitLocker</span><h3>Encryption and protectors</h3><pre class="case-code-block"><code>Get-BitLockerVolume -MountPoint "C:"
+manage-bde -status C:
+manage-bde -protectors -get C:</code></pre></article>
+          <article class="case-detail reveal"><span>Firewall</span><h3>Profiles and rules</h3><pre class="case-code-block"><code>Get-NetFirewallProfile
+Get-NetFirewallRule |
+  Where-Object DisplayName -Match "RDP|NetBIOS"</code></pre></article>
+          <article class="case-detail reveal"><span>Connectivity</span><h3>Transport and resolution</h3><pre class="case-code-block"><code>Test-NetConnection -ComputerName "CL-WIN11-002" `
+  -Port 3389 -InformationLevel Detailed</code></pre></article>
+          <article class="case-detail reveal"><span>Antivirus</span><h3>Preference and status</h3><pre class="case-code-block"><code>Get-MpPreference
+Get-MpComputerStatus</code></pre></article>
+          <article class="case-detail reveal"><span>User Policy</span><h3>NoControlPanel</h3><pre class="case-code-block"><code>Get-ItemProperty `
+  -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" `
+  -Name "NoControlPanel" -ErrorAction SilentlyContinue</code></pre></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Evidence Plan</p><h2>Authentic, redacted evidence may be added later; no screenshots are invented here.</h2></div>
+        <div class="case-detail-grid"><article class="case-detail reveal"><span>01</span><h3>Entra device record</h3><p>Device identity and join evidence.</p></article><article class="case-detail reveal"><span>02</span><h3>Intune device overview</h3><p>Enrollment and management evidence.</p></article><article class="case-detail reveal"><span>03</span><h3>BitLocker evidence</h3><p>Escrow or protector state, carefully redacted.</p></article><article class="case-detail reveal"><span>04</span><h3>Firewall assignment</h3><p>Baseline and separate rule policies.</p></article><article class="case-detail reveal"><span>05</span><h3>Antivirus policy</h3><p>Selected Defender configuration.</p></article><article class="case-detail reveal"><span>06</span><h3>PowerShell validation</h3><p>Effective endpoint state without sensitive values.</p></article></div>
+        <div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Publication Safety</p><h2>Sensitive identity and recovery data stays private.</h2></div><div class="case-notes-copy"><p>Evidence must redact recovery passwords, recovery-key identifiers, tenant IDs, unnecessary device IDs, usernames, email addresses, and sensitive IP details.</p></div></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Troubleshooting and Recovery</p><h2>The failure path crossed transport, name resolution, authentication, and device identity.</h2></div>
+        <div class="case-table-panel reveal"><table class="case-benchmark-table"><thead><tr><th scope="col">Step</th><th scope="col">Layer</th><th scope="col">Observation and action</th></tr></thead><tbody><tr><th scope="row">1</th><td>Firewall posture</td><td>Default inbound blocking applied successfully.</td></tr><tr><th scope="row">2</th><td>RDP transport</td><td>RDP failed because TCP 3389 had no explicit allow rule.</td></tr><tr><th scope="row">3</th><td>RDP transport</td><td>A dedicated TCP 3389 policy restored the network path.</td></tr><tr><th scope="row">4</th><td>Connectivity</td><td>Testing by IP succeeded and proved the TCP path.</td></tr><tr><th scope="row">5</th><td>Authentication</td><td>Entra web-account authentication required the registered short device name.</td></tr><tr><th scope="row">6</th><td>Name resolution</td><td>The baseline blocked the lab's legacy short-name resolution path.</td></tr><tr><th scope="row">7</th><td>Lab exception</td><td>A subnet-scoped UDP 137 rule temporarily restored resolution.</td></tr><tr><th scope="row">8</th><td>Device identity</td><td>RDP succeeded using CL-WIN11-002 with “Use a web account to sign in to the remote computer.”</td></tr></tbody></table></div>
+        <div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Managed Rollback</p><h2>The endpoint did not need to be rebuilt.</h2></div><div class="case-notes-copy"><p>The user-targeted WIN11-CFG-Hide-Settings-App policy set NoControlPanel=1 and blocked Control Panel and Windows Settings. The setting was confirmed in HKCU, traced to Intune, corrected at the source, and verified through registry removal. Windows Settings returned without an unmanaged local override.</p></div></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Engineering Decision Log</p><h2>The strongest decisions controlled blast radius, policy ownership, and technical debt.</h2></div>
+        <div class="case-table-panel reveal"><table class="case-benchmark-table"><thead><tr><th scope="col">Decision</th><th scope="col">Reason</th><th scope="col">Outcome</th></tr></thead><tbody><tr><th scope="row">Pilot through GRP-Test-Devices</th><td>Bound access and user-experience risk.</td><td>Issues remained limited to the test endpoint.</td></tr><tr><th scope="row">Separate baseline and rules</th><td>Posture and exceptions have different lifecycles.</td><td>RDP and UDP 137 were independently reviewable.</td></tr><tr><th scope="row">Validate endpoint state</th><td>Portal status cannot show every local interaction.</td><td>Identity, encryption, firewall, antivirus, and registry state were confirmed.</td></tr><tr><th scope="row">Correct policy in Intune</th><td>Local changes create drift and hide the source error.</td><td>Settings returned with management authority intact.</td></tr><tr><th scope="row">Avoid broad exclusions</th><td>General exclusions weaken protection.</td><td>Broad Defender coverage remained in place.</td></tr></tbody></table></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Operational Lessons</p><h2>Endpoint engineering depends on understanding the full policy and authentication path.</h2></div>
+        <div class="case-detail-grid"><article class="case-detail reveal"><span>01</span><h3>Pilot before production</h3><p>Bound the impact before expanding assignment.</p></article><article class="case-detail reveal"><span>02</span><h3>Separate baselines</h3><p>Make every exception visible and independently owned.</p></article><article class="case-detail reveal"><span>03</span><h3>Validate the path</h3><p>Transport, resolution, authentication, and identity are distinct layers.</p></article><article class="case-detail reveal"><span>04</span><h3>Use endpoint evidence</h3><p>Correlate reporting with effective state.</p></article><article class="case-detail reveal"><span>05</span><h3>Fix the source</h3><p>Preserve managed authority and avoid local drift.</p></article><article class="case-detail reveal"><span>06</span><h3>Track technical debt</h3><p>Keep legacy exceptions narrow and plan their removal.</p></article></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal"><p class="eyebrow">Technologies &amp; Engineering Skills</p><h2>Microsoft endpoint controls paired with disciplined infrastructure practice.</h2></div>
+        <div class="case-summary-grid"><article class="case-summary reveal"><span>Technologies</span><ul class="tag-list"><li>Microsoft Entra ID</li><li>Microsoft Intune</li><li>Windows 11 Enterprise</li><li>Defender Antivirus</li><li>Defender Firewall</li><li>BitLocker</li><li>PowerShell</li></ul></article><article class="case-summary reveal"><span>Engineering Skills</span><ul class="tag-list"><li>Endpoint Security</li><li>Identity &amp; Device Management</li><li>Policy Design</li><li>Pilot Deployment</li><li>Endpoint Validation</li><li>Policy Troubleshooting</li><li>Change Control</li><li>Rollback Discipline</li></ul></article></div>
+      </section>
+
+      <section class="section"><div class="case-next reveal"><div><p class="eyebrow">Future Improvements</p><h2>Remove the legacy name-resolution dependency and extend the management lifecycle deliberately.</h2></div><ul class="case-roadmap" aria-label="Future endpoint management evaluation areas"><li>Managed DNS</li><li>Autopilot</li><li>Conditional Access</li><li>Windows LAPS</li><li>ASR Audit</li><li>Update Rings</li><li>Policy Versioning</li></ul></div></section>
+
+      <section class="section"><div class="case-notes-callout reveal"><div class="case-notes-heading"><p class="eyebrow">Executive Takeaway</p><h2>The value was understanding the system when things did not go as planned.</h2></div><div class="case-notes-copy"><p>The value of this project was not that policies deployed successfully. It was understanding how identity, endpoint security, authentication, validation, and troubleshooting behave together when things do not go as planned.</p><p><a class="button secondary" href="../index.html#projects">Back to Projects</a></p></div></div></section>
+    </main>
+    <footer class="site-footer"><span>Matt Smalling</span><span>Infrastructure Modernization - Platform Engineering - AI Infrastructure</span></footer>
+    <script src="../src/main.js"></script>
+  </body>
+</html>

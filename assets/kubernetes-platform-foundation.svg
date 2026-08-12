@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 620" role="img" aria-labelledby="title desc">
-  <title id="title">NovaLab Kubernetes Platform Foundation architecture</title>
-  <desc id="desc">A layered architecture diagram showing Proxmox, Terraform, Ubuntu cloud images, a K3s cluster, Helm, platform services, and planned future components.</desc>
+  <title id="title">Genesis Kubernetes Platform Foundation architecture</title>
+  <desc id="desc">A layered architecture diagram showing the highly available Kubernetes API VIP, three K3s control-plane nodes, worker and service layers, separate etcd and Velero backups in RustFS, and the persistent-data protection boundary.</desc>
   <defs>
     <style>
       .bg { fill: #101419; }
@@ -9,7 +9,9 @@
       .node-alt { fill: #202832; stroke: rgba(126,160,183,.48); stroke-width: 1.5; }
       .future { fill: rgba(126,160,183,.08); stroke: rgba(126,160,183,.52); stroke-width: 1.5; stroke-dasharray: 8 8; }
       .label { fill: #f1eadf; font: 700 22px "Segoe UI", Arial, sans-serif; }
+      .label-small { fill: #f1eadf; font: 700 18px "Segoe UI", Arial, sans-serif; }
       .small { fill: #b8afa2; font: 500 15px "Segoe UI", Arial, sans-serif; }
+      .tiny { fill: #b8afa2; font: 500 13px "Segoe UI", Arial, sans-serif; }
       .mono { fill: #c58b3b; font: 700 14px Consolas, monospace; text-transform: uppercase; }
       .steel { fill: #7ea0b7; font: 700 14px Consolas, monospace; }
       .line { stroke: rgba(197,139,59,.72); stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
@@ -30,52 +32,54 @@
   <rect width="1180" height="620" fill="url(#grid)"/>
 
   <rect class="panel" x="48" y="44" width="1084" height="532" rx="0"/>
-  <text class="mono" x="82" y="84">NovaLab Kubernetes Platform Foundation</text>
-  <text class="small" x="82" y="112">Infrastructure as Code, clean operating-system provisioning, and Kubernetes application management separated by responsibility.</text>
+  <text class="mono" x="82" y="84">Genesis Kubernetes Platform Foundation</text>
+  <text class="small" x="82" y="112">Highly available API access and layered recovery, validated independently by failure and restore testing.</text>
 
   <rect class="node" x="92" y="164" width="210" height="92"/>
-  <text class="steel" x="118" y="195">Infrastructure</text>
-  <text class="label" x="118" y="226">Proxmox Cluster</text>
+  <text class="steel" x="118" y="195">HA Pair</text>
+  <text class="label-small" x="118" y="226">HAProxy + Keepalived</text>
 
   <path class="line" d="M302 210H386"/>
 
   <rect class="node-alt" x="386" y="164" width="190" height="92"/>
-  <text class="steel" x="412" y="195">Provisioning</text>
-  <text class="label" x="412" y="226">Terraform</text>
+  <text class="steel" x="412" y="195">Kubernetes API</text>
+  <text class="label-small" x="412" y="226">192.168.70.5 VIP</text>
 
   <path class="line" d="M576 210H660"/>
 
   <rect class="node" x="660" y="164" width="228" height="92"/>
-  <text class="steel" x="686" y="195">Base Images</text>
-  <text class="label" x="686" y="226">Ubuntu Cloud Images</text>
+  <text class="steel" x="686" y="195">Control Plane</text>
+  <text class="label-small" x="686" y="226">3 K3s Server Nodes</text>
 
   <path class="line" d="M774 256V326"/>
 
   <rect class="node-alt" x="504" y="326" width="540" height="126"/>
-  <text class="steel" x="532" y="358">Kubernetes Layer</text>
-  <text class="label" x="532" y="391">K3s Cluster</text>
-  <text class="small" x="532" y="420">1 control plane, 2 workers, persistent KUBECONFIG, verified node and pod health</text>
+  <text class="steel" x="532" y="358">Recovery Layers</text>
+  <text class="label" x="532" y="391">etcd Snapshots + Velero</text>
+  <text class="small" x="532" y="420">Control-plane state and Kubernetes resources protected by separate mechanisms</text>
 
   <rect class="node" x="126" y="326" width="250" height="126"/>
-  <text class="steel" x="154" y="358">Admin Tooling</text>
-  <text class="label" x="154" y="391">Bootstrap Scripts</text>
-  <text class="small" x="154" y="420">Helm, kubectl access, k9s, operator workstation setup</text>
+  <text class="steel" x="154" y="358">Cluster Layer</text>
+  <text class="label" x="154" y="391">Workers + Services</text>
+  <text class="tiny" x="154" y="420">Helm, Headlamp, RBAC, MetalLB</text>
+  <text class="tiny" x="154" y="440">and platform workloads</text>
 
   <path class="soft-line" d="M376 389H504"/>
 
   <path class="line" d="M774 452V500"/>
 
   <rect class="node" x="504" y="500" width="250" height="56"/>
-  <text class="label" x="532" y="535">Helm</text>
+  <text class="label-small" x="532" y="535">RustFS / S3-Compatible</text>
 
   <path class="line" d="M754 528H822"/>
 
   <rect class="node-alt" x="822" y="488" width="250" height="88"/>
-  <text class="steel" x="850" y="520">Platform Services</text>
-  <text class="label" x="850" y="551">Metrics Server</text>
-  <text class="label" x="850" y="574">cert-manager</text>
+  <text class="steel" x="850" y="520">Separate Buckets</text>
+  <text class="label-small" x="850" y="547">genesis-k3s-etcd</text>
+  <text class="label-small" x="850" y="570">genesis-velero</text>
 
   <rect class="future" x="92" y="488" width="336" height="88"/>
-  <text class="steel" x="120" y="520">Future Components</text>
-  <text class="small" x="120" y="550">MetalLB, Ingress, Prometheus, Grafana, Loki, Argo CD, storage, AI workloads</text>
+  <text class="steel" x="120" y="520">Persistent-Data Boundary</text>
+  <text class="tiny" x="120" y="548">local-path exists; CSI snapshots and full</text>
+  <text class="tiny" x="120" y="568">data protection are not implemented</text>
 </svg>

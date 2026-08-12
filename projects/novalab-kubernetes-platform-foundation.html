@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-            content="NovaLab Kubernetes Platform Foundation case study: a repeatable Kubernetes platform on Proxmox using Infrastructure as Code, cloud-init, Helm, Metrics Server, cert-manager, and version-controlled engineering practices."
+            content="Genesis Kubernetes Platform Foundation case study: a highly available K3s platform with layered etcd and Kubernetes resource recovery, S3-compatible off-node backups, and destructive restore validation."
     />
-    <title>NovaLab Kubernetes Platform Foundation | Matt Smalling</title>
+    <title>Genesis Kubernetes Platform Foundation | Matt Smalling</title>
     <link rel="stylesheet" href="../src/styles.css" />
   </head>
   <body>
@@ -30,7 +30,7 @@
         <a href="../index.html#projects">Projects</a>
         <a href="../index.html#leadership">Leadership</a>
         <a href="../index.html#philosophy">Modernization</a>
-        <a href="../index.html#novalab-status">NovaLab</a>
+        <a href="../index.html#novalab-status">Genesis</a>
         <a href="../index.html#learning">Learning</a>
         <a href="../index.html#contact">Contact</a>
       </nav>
@@ -40,15 +40,15 @@
       <section class="section case-hero">
         <div class="case-hero-copy reveal">
           <p class="eyebrow">Case Study - Kubernetes Platform Engineering</p>
-          <h1>NovaLab Kubernetes Platform Foundation</h1>
+          <h1>Genesis Kubernetes Platform Foundation</h1>
           <p class="hero-lede">
-            This project builds a repeatable Kubernetes platform on Proxmox using Infrastructure as Code, cloud-init,
-            bootstrap automation, and Helm-managed platform services.
+            Genesis is an enterprise-style Kubernetes development environment built in a private lab to exercise
+            platform architecture, implementation, operations, and recovery as one connected system.
           </p>
           <p class="hero-lede">
-            The work is focused on platform construction and operational repeatability: create the infrastructure, keep
-            the operating system clean, configure administrator tooling, install platform services, and document the
-            decisions that make the environment easier to rebuild and evolve.
+            The current platform combines a highly available K3s control plane with layered disaster recovery: embedded
+            etcd snapshots for control-plane state and Velero for Kubernetes-aware resource restoration, both protected
+            in local S3-compatible RustFS object storage.
           </p>
           <div class="hero-actions">
             <a class="button primary" href="#architecture">Architecture</a>
@@ -56,19 +56,20 @@
           </div>
         </div>
 
-        <div class="case-spec-panel reveal" aria-label="NovaLab Kubernetes platform baseline">
+        <div class="case-spec-panel reveal" aria-label="Genesis Kubernetes platform baseline">
           <div class="panel-topline">
             <span>Platform Status</span>
-            <span class="status-dot">Foundation Complete</span>
+            <span class="status-dot">Recovery Validated</span>
           </div>
           <ul>
             <li><span>Infrastructure</span><strong>Proxmox VE</strong></li>
             <li><span>Provisioning</span><strong>Terraform + cloud-init</strong></li>
             <li><span>Operating System</span><strong>Ubuntu Server 24.04 LTS</strong></li>
             <li><span>Kubernetes</span><strong>K3s</strong></li>
-            <li><span>Cluster Shape</span><strong>1 control plane / 2 workers</strong></li>
-            <li><span>Services</span><strong>Metrics Server + cert-manager</strong></li>
-            <li><span>Admin Tooling</span><strong>kubectl, Helm, k9s</strong></li>
+            <li><span>Control Plane</span><strong>3 K3s server nodes + workers</strong></li>
+            <li><span>API Access</span><strong>192.168.70.5 HA VIP</strong></li>
+            <li><span>Recovery</span><strong>etcd snapshots + Velero</strong></li>
+            <li><span>Off-node Repository</span><strong>S3-compatible RustFS</strong></li>
           </ul>
         </div>
       </section>
@@ -76,7 +77,7 @@
       <section class="section">
         <div class="section-heading reveal">
           <p class="eyebrow">Project Goal</p>
-          <h2>The goal was not to deploy Kubernetes once. The goal was to build a foundation that can be repeated.</h2>
+          <h2>The goal is a working platform that makes architecture, failure modes, and recovery decisions testable.</h2>
         </div>
         <div class="case-summary-grid">
           <article class="case-summary reveal">
@@ -89,15 +90,15 @@
           <article class="case-summary reveal">
             <span>Platform Pattern</span>
             <p>
-              K3s provides a lightweight Kubernetes control plane and worker layer suitable for lab platform work,
-              service validation, and future application hosting.
+              Three K3s control-plane nodes and worker nodes provide the cluster foundation, while two dedicated
+              HAProxy and Keepalived VMs expose a resilient Kubernetes API endpoint.
             </p>
           </article>
           <article class="case-summary reveal">
             <span>Operating Pattern</span>
             <p>
-              Bootstrap scripts configure administrator tooling after node provisioning, keeping base infrastructure
-              setup separate from operator workflow setup.
+              Protection is separated by responsibility: etcd snapshots support control-plane disaster recovery,
+              Velero restores Kubernetes resources, and persistent application data remains a distinct design concern.
             </p>
           </article>
         </div>
@@ -106,7 +107,7 @@
       <section class="section">
         <div class="section-heading reveal">
           <p class="eyebrow">Technology Stack</p>
-          <h2>The stack separates infrastructure, Kubernetes operations, platform services, and development workflow.</h2>
+          <h2>The stack separates infrastructure, API availability, Kubernetes operations, and recovery responsibilities.</h2>
         </div>
         <div class="case-detail-grid">
           <article class="case-detail reveal">
@@ -116,18 +117,18 @@
           </article>
           <article class="case-detail reveal">
             <span>Platform</span>
-            <h3>K3s, Helm, kubectl, k9s</h3>
-            <p>The cluster is operated with standard Kubernetes tooling and Helm-based application installation.</p>
+            <h3>K3s, Helm, kubectl, k9s, Headlamp</h3>
+            <p>The cluster is operated with standard Kubernetes tooling, Helm-managed applications, RBAC, and administrative interfaces.</p>
           </article>
           <article class="case-detail reveal">
-            <span>Services</span>
-            <h3>Metrics Server and cert-manager</h3>
-            <p>Metrics Server validates resource visibility, while cert-manager introduces certificate automation and CRD-driven platform extension.</p>
+            <span>High Availability</span>
+            <h3>HAProxy, Keepalived, 192.168.70.5</h3>
+            <p>Two dedicated load-balancer VMs provide the Kubernetes API VIP; failover of that client endpoint was deliberately validated.</p>
           </article>
           <article class="case-detail reveal">
-            <span>Development</span>
-            <h3>Git and GitHub</h3>
-            <p>Git becomes the durable record for infrastructure definitions, scripts, installation notes, and troubleshooting history.</p>
+            <span>Protection</span>
+            <h3>K3s etcd snapshots, Velero, RustFS</h3>
+            <p>Separate S3-compatible buckets protect control-plane state and Kubernetes resource backups without representing RustFS as AWS.</p>
           </article>
         </div>
       </section>
@@ -135,45 +136,59 @@
       <section class="section" id="architecture">
         <div class="section-heading reveal">
           <p class="eyebrow">Architecture Overview</p>
-          <h2>Each layer has a clear responsibility, from Proxmox infrastructure to Kubernetes platform services.</h2>
+          <h2>Availability and recovery are layered so each mechanism has a clear responsibility.</h2>
         </div>
         <div class="case-architecture reveal">
           <div class="case-layer-map">
             <article><span>Proxmox Cluster</span><strong>Provides the virtualization layer for the platform nodes.</strong></article>
             <article><span>Terraform</span><strong>Defines and creates the virtual machine infrastructure.</strong></article>
             <article><span>cloud-init</span><strong>Configures the Ubuntu operating-system baseline at first boot.</strong></article>
-            <article><span>K3s Cluster</span><strong>Runs one control plane and two worker nodes as the Kubernetes foundation.</strong></article>
-            <article><span>Helm</span><strong>Installs and manages Kubernetes applications as platform services.</strong></article>
-            <article><span>Services</span><strong>Metrics Server and cert-manager validate the first platform service layer.</strong></article>
-            <article><span>Future</span><strong>Networking, observability, GitOps, storage, AI workloads, and media services build on this baseline.</strong></article>
+            <article><span>API Availability</span><strong>Keepalived provides 192.168.70.5 while HAProxy distributes API connections across three control-plane nodes.</strong></article>
+            <article><span>K3s Cluster</span><strong>Runs three control-plane nodes plus workers; the HA API VIP failover path is validated.</strong></article>
+            <article><span>Control-plane DR</span><strong>K3s embedded-etcd snapshots are written off-node to the genesis-k3s-etcd RustFS bucket.</strong></article>
+            <article><span>Resource Recovery</span><strong>Velero writes Kubernetes resource backups to genesis-velero and has restored a deliberately deleted workload.</strong></article>
+            <article><span>Data Boundary</span><strong>Local-path storage lacks CSI snapshot capability; complete persistent application-data protection is not implemented.</strong></article>
           </div>
           <div class="case-diagram-slot" aria-label="Kubernetes platform responsibility model">
             <span>Responsibility Model</span>
-            <strong>Terraform creates infrastructure, cloud-init configures the OS, bootstrap scripts configure administrators, and Helm manages platform services.</strong>
+            <strong>HA keeps the API reachable; etcd snapshots protect control-plane state; Velero protects Kubernetes resources; application data needs its own storage-aware controls.</strong>
+          </div>
+        </div>
+        <div class="case-notes-callout reveal">
+          <div class="case-notes-heading">
+            <p class="eyebrow">HA Boundary</p>
+            <h2>The VIP is the validated HA client endpoint, not a claim about every internal join relationship.</h2>
+          </div>
+          <div class="case-notes-copy">
+            <p>
+              Keepalived and HAProxy provide <strong>192.168.70.5</strong> for highly available Kubernetes API access.
+              CP-02 and CP-03 were originally joined through CP-01 at <strong>192.168.70.10:6443</strong>. Whether those
+              internal relationships should be changed to use the VIP is a separate architecture review item.
+            </p>
           </div>
         </div>
         <figure class="case-figure reveal">
-          <img src="../assets/kubernetes-platform-foundation.svg" alt="NovaLab Kubernetes Platform Foundation architecture diagram" />
-          <figcaption>Proxmox to Terraform to Ubuntu cloud images to K3s, then Helm-managed platform services and future components.</figcaption>
+          <img src="../assets/kubernetes-platform-foundation.svg" alt="Genesis Kubernetes high-availability and layered recovery architecture diagram" />
+          <figcaption>The validated path separates HA API access, embedded-etcd protection, Kubernetes-aware Velero recovery, and the unresolved persistent-data boundary.</figcaption>
         </figure>
       </section>
 
       <section class="section">
         <div class="section-heading reveal">
           <p class="eyebrow">Accomplishments</p>
-          <h2>The foundation is validated across infrastructure, administration, and first platform services.</h2>
+          <h2>The platform now includes validated API failover, off-node backup paths, policy execution, and destructive recovery.</h2>
         </div>
         <div class="case-outcome-dashboard reveal" aria-label="Kubernetes platform accomplishments">
-          <article><span>Cluster</span><strong>Three-node K3s cluster</strong></article>
-          <article><span>Control Plane</span><strong>One control-plane node</strong></article>
-          <article><span>Workers</span><strong>Two worker nodes</strong></article>
-          <article><span>Provisioning</span><strong>Terraform deployment</strong></article>
-          <article><span>OS Setup</span><strong>cloud-init provisioning</strong></article>
-          <article><span>Access</span><strong>Persistent KUBECONFIG</strong></article>
-          <article><span>Admin Tools</span><strong>Helm and k9s installed</strong></article>
-          <article><span>Health</span><strong>Cluster health verified</strong></article>
-          <article><span>Metrics</span><strong>kubectl top validated</strong></article>
-          <article><span>TLS</span><strong>cert-manager installed</strong></article>
+          <article><span>Control Plane</span><strong>Three K3s server nodes</strong></article>
+          <article><span>API VIP</span><strong>192.168.70.5</strong></article>
+          <article><span>HA Validation</span><strong>VIP failover tested</strong></article>
+          <article><span>etcd Repository</span><strong>genesis-k3s-etcd</strong></article>
+          <article><span>Resource Repository</span><strong>genesis-velero</strong></article>
+          <article><span>Velero</span><strong>v1.18.2</strong></article>
+          <article><span>Schedule</span><strong>Daily / 14-day TTL</strong></article>
+          <article><span>Policy Test</span><strong>428 of 428 objects</strong></article>
+          <article><span>Restore Test</span><strong>Deleted namespace recovered</strong></article>
+          <article><span>Kasten</span><strong>Evaluated, not deployed</strong></article>
         </div>
       </section>
 
@@ -209,6 +224,122 @@
               <li><span>Check</span><strong>Helm and k9s available from the operator shell.</strong></li>
               <li><span>Result</span><strong>Day-two cluster access is repeatable.</strong></li>
             </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Layered Recovery Architecture</p>
+          <h2>Kubernetes backup is not one mechanism; each layer protects a different recovery boundary.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Layer 1 - Control Plane</span>
+            <h3>K3s embedded-etcd snapshots</h3>
+            <p>
+              Scheduled snapshots protect Kubernetes control-plane state and are written directly to the
+              <strong>genesis-k3s-etcd</strong> bucket in the local S3-compatible RustFS service. Manual and scheduled
+              snapshot creation were validated across the control-plane environment.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Layer 2 - Kubernetes Resources</span>
+            <h3>Velero workload and API-resource recovery</h3>
+            <p>
+              Velero 1.18.2 uses the compatible AWS/S3 plugin 1.14.2 as an S3 protocol adapter for RustFS. AWS is not
+              part of this implementation. Backups are isolated in the <strong>genesis-velero</strong> bucket.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Layer 3 - Persistent Data</span>
+            <h3>A separate protection problem</h3>
+            <p>
+              K3s local-path storage is present, but the environment does not provide the CSI snapshot capability
+              needed for advanced volume protection. Full persistent application-data protection is not implemented.
+            </p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Required DR Follow-up</span>
+            <h3>Protect and validate K3s recovery material</h3>
+            <p>
+              The K3s server token and configuration material are required for etcd disaster recovery. Independent
+              protection and recovery validation of that material remain explicit security and DR follow-up work.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Destructive Recovery Validation</p>
+          <h2>The recovery path was tested by deleting a workload and restoring it from off-node storage.</h2>
+        </div>
+        <div class="case-detail-grid">
+          <article class="case-detail reveal">
+            <span>Test Workload</span>
+            <h3>velero-test with NGINX</h3>
+            <p>A namespace containing an NGINX deployment was backed up successfully and then deliberately deleted.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Deletion Check</span>
+            <h3>Absence confirmed before restore</h3>
+            <p>Kubernetes confirmed that the namespace and its resources no longer existed before restoration began.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Restore Result</span>
+            <h3>Namespace and workload recreated</h3>
+            <p>The namespace, deployment, ReplicaSet, and running NGINX pod were successfully restored.</p>
+          </article>
+          <article class="case-detail reveal">
+            <span>Validated Path</span>
+            <h3>Kubernetes → Velero → RustFS → recovery</h3>
+            <p>The result demonstrates recoverability, not merely successful product installation or configuration.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Operational Backup Policy</p>
+          <h2>The daily whole-cluster resource policy was executed from its real schedule template and independently verified.</h2>
+        </div>
+        <div class="case-table-panel reveal">
+          <table class="case-benchmark-table">
+            <thead>
+              <tr><th scope="col">Control</th><th scope="col">Policy or Test</th><th scope="col">Validated Result</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Schedule</th><td>genesis-daily</td><td>Whole-cluster Kubernetes resource backup, daily, with a 336-hour / 14-day TTL.</td></tr>
+              <tr><th scope="row">Template Test</th><td>genesis-daily-test created from genesis-daily</td><td>Completed with all namespaces included and no namespace exclusions.</td></tr>
+              <tr><th scope="row">Object Count</th><td>428 objects expected</td><td>428 objects successfully backed up.</td></tr>
+              <tr><th scope="row">Repository Evidence</th><td>genesis-velero / backups / genesis-daily-test</td><td>Archive, logs, metadata, resource lists, results, volume information, and velero-backup.json verified in RustFS.</td></tr>
+              <tr><th scope="row">etcd Automation</th><td>Operational schedule</td><td>Scheduled S3 snapshot creation validated; a temporary five-minute test interval was removed after observation.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading reveal">
+          <p class="eyebrow">Compatibility Assessment</p>
+          <h2>Kasten K10 was evaluated with its official prerequisite test and intentionally not deployed.</h2>
+        </div>
+        <div class="case-decision-grid">
+          <article class="case-decision reveal">
+            <span>Candidate</span>
+            <h3>Kasten K10 9.0.2</h3>
+            <p>The official Helm repository was prepared and the K10 Primer was run before introducing the product.</p>
+          </article>
+          <article class="case-decision reveal">
+            <span>Findings</span>
+            <h3>Version and storage prerequisites were not met</h3>
+            <p>The Primer rejected Kubernetes <strong>v1.36.3+k3s1</strong> as unsupported and identified the lack of CSI snapshot capability in the local-path storage design.</p>
+          </article>
+          <article class="case-decision reveal">
+            <span>Decision</span>
+            <h3>Do not deploy K10 in the current environment</h3>
+            <p>The evaluation prevented an incompatible deployment and turned the result into input for the next Kubernetes version and storage architecture review.</p>
           </article>
         </div>
       </section>
@@ -408,7 +539,7 @@
       <section class="section">
         <div class="section-heading reveal">
           <p class="eyebrow">Foundation Readiness Assessment</p>
-          <h2>The foundation is validated; the next layers are planned platform work.</h2>
+          <h2>Implemented, evaluated, and unresolved capabilities are kept distinct.</h2>
         </div>
         <div class="case-table-panel reveal">
           <table class="case-benchmark-table">
@@ -426,11 +557,16 @@
               <tr><th scope="row">Helm</th><td>Ready</td><td>Kubernetes application management is available.</td></tr>
               <tr><th scope="row">Metrics</th><td>Ready</td><td>Metrics Server is installed and validated.</td></tr>
               <tr><th scope="row">TLS Management</th><td>Ready</td><td>cert-manager is installed with CRDs and running pods.</td></tr>
+              <tr><th scope="row">API High Availability</th><td>Validated</td><td>Keepalived and HAProxy provide 192.168.70.5; VIP failover was tested.</td></tr>
+              <tr><th scope="row">Control-plane Protection</th><td>Validated</td><td>K3s embedded-etcd snapshots are scheduled to off-node S3-compatible RustFS storage.</td></tr>
+              <tr><th scope="row">Resource Recovery</th><td>Validated</td><td>Velero restored a deliberately deleted namespace and workload.</td></tr>
               <tr><th scope="row">Ingress</th><td>Planned</td><td>Ingress controller selection and configuration are next.</td></tr>
-              <tr><th scope="row">Load Balancer</th><td>Planned</td><td>MetalLB or equivalent lab load-balancer pattern is planned.</td></tr>
+              <tr><th scope="row">MetalLB</th><td>Installed / Evaluating</td><td>Worked with as a service exposure option; no broader production role is claimed.</td></tr>
               <tr><th scope="row">GitOps</th><td>Planned</td><td>Argo CD is planned for declarative application delivery.</td></tr>
               <tr><th scope="row">Observability</th><td>Planned</td><td>Prometheus, Grafana, and Loki are planned beyond Metrics Server.</td></tr>
-              <tr><th scope="row">Persistent Storage</th><td>Planned</td><td>Storage class and data persistence patterns still need selection.</td></tr>
+              <tr><th scope="row">Persistent Storage</th><td>Limited</td><td>K3s local-path exists, but CSI snapshots and complete persistent-data protection do not.</td></tr>
+              <tr><th scope="row">Kasten K10</th><td>Not Deployed</td><td>Version 9.0.2 was evaluated and rejected by prerequisites for Kubernetes version and CSI capability.</td></tr>
+              <tr><th scope="row">DR Recovery Material</th><td>Follow-up</td><td>Independent protection and restore validation for the K3s server token/configuration remain required.</td></tr>
               <tr><th scope="row">Application Platform</th><td>Planned</td><td>Application hosting patterns come after networking, storage, and GitOps.</td></tr>
             </tbody>
           </table>
@@ -439,34 +575,34 @@
 
       <section class="section">
         <div class="section-heading reveal">
-          <p class="eyebrow">Future Roadmap</p>
-          <h2>The platform foundation is complete; the next work adds networking, observability, delivery, and workloads.</h2>
+          <p class="eyebrow">Platform Evolution</p>
+          <h2>The foundation has progressed from repeatable deployment to HA and tested recovery, with storage design next.</h2>
         </div>
         <ol class="timeline">
           <li class="reveal">
             <span>Phase 1</span>
             <h3>Platform Foundation</h3>
-            <p>Completed: Proxmox, Terraform, cloud-init, K3s, administrator tooling, Metrics Server, and cert-manager.</p>
+            <p>Completed: Proxmox, Terraform, cloud-init, K3s, administrator tooling, Metrics Server, cert-manager, and initial platform services.</p>
           </li>
           <li class="reveal">
             <span>Phase 2</span>
-            <h3>Networking</h3>
-            <p>Add MetalLB and ingress so services can be exposed through a cleaner platform access model.</p>
+            <h3>Control-plane High Availability</h3>
+            <p>Completed: three control-plane nodes plus HAProxy and Keepalived at 192.168.70.5, with VIP failover validated.</p>
           </li>
           <li class="reveal">
             <span>Phase 3</span>
-            <h3>Platform Services</h3>
-            <p>Add Prometheus, Grafana, and Loki for observability beyond the first resource metrics layer.</p>
+            <h3>Layered Recovery</h3>
+            <p>Completed and tested: K3s etcd snapshots, Velero resource backups, off-node RustFS repositories, scheduling, and destructive restore.</p>
           </li>
           <li class="reveal">
             <span>Phase 4</span>
-            <h3>GitOps</h3>
-            <p>Use Argo CD and automated deployments to move application state into a declarative delivery model.</p>
+            <h3>Storage and DR Hardening</h3>
+            <p>Evaluate CSI-capable storage, define persistent-data protection, and independently protect and validate required K3s recovery material.</p>
           </li>
           <li class="reveal">
             <span>Phase 5</span>
-            <h3>AI and Media Platform</h3>
-            <p>Extend the platform toward GPU workloads, inference, Tdarr, Jellyfin, and other service workloads.</p>
+            <h3>Platform Services and Workloads</h3>
+            <p>Continue ingress, observability, GitOps, and workload patterns after the recovery and storage boundaries are explicit.</p>
           </li>
         </ol>
       </section>
@@ -485,9 +621,9 @@
               were clear, the whole platform became easier to reason about.
             </p>
             <p>
-              The biggest lesson was that Kubernetes is an operational surface, not just a cluster. Installing Metrics
-              Server and cert-manager forced me to understand releases, namespaces, pods, CRDs, and the object hierarchy
-              behind the services.
+              The biggest lesson was that availability and recoverability are different. A highly available API does not
+              replace control-plane backups, and an etcd snapshot does not replace Kubernetes-aware workload recovery or
+              application-data protection.
             </p>
             <p>
               I also realized this follows the same automation philosophy I used years ago with Windows batch deployment
@@ -500,9 +636,10 @@
               structure becomes part of the platform.
             </p>
             <p>
-              This project represents a shift from learning Kubernetes commands to building a reusable platform. That
-              is the part that matters most: the platform can now grow into networking, observability, GitOps, storage,
-              AI workloads, and media workloads without starting from scratch.
+              The destructive Velero test changed the quality of the claim. The platform did not stop at installing a
+              backup tool: a workload was removed, its absence was confirmed, and Kubernetes recreated it from the
+              off-node backup path. The storage limitation and Kasten decision are equally useful because they identify
+              what the current architecture cannot yet protect.
             </p>
           </div>
         </div>
@@ -511,17 +648,16 @@
       <section class="section">
         <div class="case-next reveal">
           <div>
-            <p class="eyebrow">Next Build Pass</p>
-            <h2>The next platform layer should make service exposure, observability, and delivery more repeatable.</h2>
+            <p class="eyebrow">Next Architecture Review</p>
+            <h2>The next pass should close recovery prerequisites and design persistent-data protection.</h2>
           </div>
           <ul class="case-roadmap" aria-label="Future Kubernetes platform work">
-            <li>MetalLB</li>
-            <li>Ingress</li>
-            <li>Prometheus</li>
-            <li>Grafana</li>
-            <li>Loki</li>
-            <li>Argo CD</li>
-            <li>Persistent Storage</li>
+            <li>K3s token and configuration protection</li>
+            <li>CSI-capable storage evaluation</li>
+            <li>Persistent-data backup design</li>
+            <li>Control-plane join-path review</li>
+            <li>Ingress and service exposure</li>
+            <li>Observability and GitOps</li>
           </ul>
         </div>
       </section>
